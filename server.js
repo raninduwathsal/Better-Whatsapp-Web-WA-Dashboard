@@ -145,12 +145,114 @@ io.on('connection', socket => {
       socket.emit('full_chat', { chatId, messages: [] });
     }
   });
+
+  socket.on('archiveChat', async ({ chatId }) => {
+    if (!waReady) { 
+      socket.emit('archive_error', { chatId, error: 'WhatsApp not ready' }); 
+      return; 
+    }
+    if (!chatId) {
+      socket.emit('archive_error', { chatId, error: 'chatId required' });
+      return;
+    }
+    try {
+      // Get the chat object
+      let chatObj = null;
+      try { chatObj = await client.getChatById(chatId); } catch(e) { /* fallback */ }
+      if (!chatObj) {
+        const all = await client.getChats();
+        chatObj = all.find(c=>c.id && c.id._serialized === chatId);
+      }
+      if (!chatObj) { 
+        socket.emit('archive_error', { chatId, error: 'Chat not found' }); 
+        return; 
+      }
+      
+      // Archive the chat in WhatsApp
+      await chatObj.archive();
+      
+      // Assign the Archived tag
+      const archivedTagId = getArchivedTagId();
+      if (archivedTagId) {
+        assignArchivedTagIfNeeded(archivedTagId, chatId);
+      }
+      
+      socket.emit('archive_success', { chatId });
+      
+      // Emit updated chats
+      try {
+        const list = await fetchChats();
+        io.emit('chats', list);
+      } catch (e) {
+        console.error('Failed to fetch chats after archiving', e);
+      }
+    } catch (err) {
+      console.error('archiveChat failed', err);
+      socket.emit('archive_error', { chatId, error: err.message || 'Failed to archive' });
+    }
+  });
+
+  socket.on('unarchiveChat', async ({ chatId }) => {
+    if (!waReady) { 
+      socket.emit('unarchive_error', { chatId, error: 'WhatsApp not ready' }); 
+      return; 
+    }
+    if (!chatId) {
+      socket.emit('unarchive_error', { chatId, error: 'chatId required' });
+      return;
+    }
+    try {
+      // Get the chat object
+      let chatObj = null;
+      try { chatObj = await client.getChatById(chatId); } catch(e) { /* fallback */ }
+      if (!chatObj) {
+        const all = await client.getChats();
+        chatObj = all.find(c=>c.id && c.id._serialized === chatId);
+      }
+      if (!chatObj) { 
+        socket.emit('unarchive_error', { chatId, error: 'Chat not found' }); 
+        return; 
+      }
+      
+      // Unarchive the chat in WhatsApp
+      await chatObj.unarchive();
+      
+      // Remove the Archived tag
+      const archivedTagId = getArchivedTagId();
+      if (archivedTagId) {
+        try {
+          sqliteDb.run('DELETE FROM tag_assignments WHERE tag_id = ? AND chat_id = ?', [archivedTagId, chatId]);
+          persistDb();
+          io.emit('tags_updated');
+        } catch (err) {
+          console.error('Failed to remove Archived tag', err);
+        }
+      }
+      
+      socket.emit('unarchive_success', { chatId });
+      
+      // Emit updated chats
+      try {
+        const list = await fetchChats();
+        io.emit('chats', list);
+      } catch (e) {
+        console.error('Failed to fetch chats after unarchiving', e);
+      }
+    } catch (err) {
+      console.error('unarchiveChat failed', err);
+      socket.emit('unarchive_error', { chatId, error: err.message || 'Failed to unarchive' });
+    }
+  });
 });
 async function fetchChats(){
   if (!waReady) return [];
   const chats = await client.getChats();
   const results = [];
   const cutoff = Date.now()/1000 - (24*60*60); // last 24 hours
+  
+  // Get Archived tag ID for auto-assignment
+  const archivedTagId = getArchivedTagId();
+  
   for (const chat of chats){
     try {
       const unread = chat.unreadCount || 0;
@@ -182,6 +284,11 @@ async function fetchChats(){
       // keep only chat name (if any) — do not derive or expose phone numbers/ids
       const displayName = chat.name || null;
       results.push({ chatId: chat.id._serialized, name: displayName, unreadCount: unread, history, lastTimestamp: lastTs });
+      
+      // Auto-assign Archived tag if chat is archived
+      if (archivedTagId && chat.archived) {
+        assignArchivedTagIfNeeded(archivedTagId, chat.id._serialized);
+      }
     } catch (err) {
       // continue on errors
     }
@@ -192,6 +299,25 @@ async function fetchChats(){
     return b.lastTimestamp - a.lastTimestamp;
   });
   return results;
+}
+
+// Assign the Archived tag to a chat if not already assigned
+function assignArchivedTagIfNeeded(archivedTagId, chatId){
+  try {
+    // Check if already assigned
+    const existing = rowsFromExec(sqliteDb.exec(`SELECT id FROM tag_assignments WHERE tag_id = ${archivedTagId} AND chat_id = "${String(chatId).replace(/"/g, '\\"')}"`));
+    if (existing && existing.length > 0) {
+      return; // Already assigned
+    }
+    
+    // Assign the tag
+    const phoneNumber = extractPhoneFromChatId(chatId);
+    sqliteDb.run('INSERT INTO tag_assignments (tag_id, chat_id, phone_number) VALUES (?, ?, ?)', [archivedTagId, chatId, phoneNumber]);
+    persistDb();
+    io.emit('tags_updated');
+  } catch (err) {
+    console.error('Failed to assign Archived tag', err);
+  }
 }
 
 const PORT = process.env.PORT || 3000;
@@ -268,7 +394,7 @@ async function initSqlite(){
   // ensure table exists
   sqliteDb.run("CREATE TABLE IF NOT EXISTS quick_replies (id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP);");
   // tags tables: tags and assignments to chat ids
-  sqliteDb.run("CREATE TABLE IF NOT EXISTS tags (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, color TEXT NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP);");
+  sqliteDb.run("CREATE TABLE IF NOT EXISTS tags (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, color TEXT NOT NULL, is_system INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP);");
   sqliteDb.run("CREATE TABLE IF NOT EXISTS tag_assignments (id INTEGER PRIMARY KEY AUTOINCREMENT, tag_id INTEGER NOT NULL, chat_id TEXT NOT NULL, phone_number TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP);");
   // notes table: notes bound to chat ids
   sqliteDb.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, chat_id TEXT NOT NULL, phone_number TEXT, text TEXT NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME);");
@@ -294,9 +420,47 @@ async function initSqlite(){
     }
   }
   
+  // Migration: add is_system column to tags table if it doesn't exist
+  try {
+    sqliteDb.exec("SELECT is_system FROM tags LIMIT 1");
+  } catch (err) {
+    if (err.message && err.message.includes('no such column')) {
+      console.log('Migrating tags table: adding is_system column...');
+      sqliteDb.run("ALTER TABLE tags ADD COLUMN is_system INTEGER DEFAULT 0");
+    }
+  }
+  
+  // Ensure permanent "Archived" tag exists
+  ensureArchivedTag();
+  
   // persist initial state
   persistDb();
   dbReady = true;
+}
+
+// Ensure the permanent "Archived" system tag exists
+function ensureArchivedTag(){
+  try {
+    const existing = rowsFromExec(sqliteDb.exec("SELECT id FROM tags WHERE name = 'Archived' AND is_system = 1 LIMIT 1"));
+    if (!existing || existing.length === 0) {
+      console.log('Creating permanent "Archived" system tag...');
+      sqliteDb.run("INSERT INTO tags (name, color, is_system) VALUES ('Archived', '#808080', 1)");
+      console.log('"Archived" tag created');
+    }
+  } catch (err) {
+    console.error('Failed to ensure Archived tag', err);
+  }
+}
+
+// Get the ID of the Archived system tag
+function getArchivedTagId(){
+  try {
+    const result = rowsFromExec(sqliteDb.exec("SELECT id FROM tags WHERE name = 'Archived' AND is_system = 1 LIMIT 1"));
+    return (result && result.length > 0) ? result[0].id : null;
+  } catch (err) {
+    console.error('Failed to get Archived tag ID', err);
+    return null;
+  }
 }
 
 app.get('/api/quick-replies', (req, res) => {
@@ -506,7 +670,7 @@ app.get('/api/quick-replies/export', (req, res) => {
 app.get('/api/tags', (req, res) => {
   if (!dbReady) return res.status(503).json({ error: 'db not ready' });
   try {
-    const rows = rowsFromExec(sqliteDb.exec('SELECT id, name, color, created_at FROM tags ORDER BY id'));
+    const rows = rowsFromExec(sqliteDb.exec('SELECT id, name, color, is_system, created_at FROM tags ORDER BY id'));
     res.json(rows);
   } catch (err) {
     console.error('GET /api/tags error', err);
@@ -538,6 +702,11 @@ app.put('/api/tags/:id', (req, res) => {
   const { name, color } = req.body || {};
   if (!id || !name || !color) return res.status(400).json({ error: 'id,name,color required' });
   try {
+    // Check if this is a system tag
+    const tag = rowsFromExec(sqliteDb.exec(`SELECT id, is_system FROM tags WHERE id = ${id}`))[0];
+    if (!tag) return res.status(404).json({ error: 'not found' });
+    if (tag.is_system) return res.status(403).json({ error: 'Cannot edit system tag' });
+    
     sqliteDb.run('UPDATE tags SET name = ?, color = ? WHERE id = ?', [name, color, id]);
     persistDb();
     io.emit('tags_updated');
@@ -554,6 +723,11 @@ app.delete('/api/tags/:id', (req, res) => {
   const id = Number(req.params.id);
   if (!id) return res.status(400).json({ error: 'id required' });
   try {
+    // Check if this is a system tag
+    const tag = rowsFromExec(sqliteDb.exec(`SELECT id, is_system FROM tags WHERE id = ${id}`))[0];
+    if (!tag) return res.status(404).json({ error: 'not found' });
+    if (tag.is_system) return res.status(403).json({ error: 'Cannot delete system tag' });
+    
     sqliteDb.run('DELETE FROM tag_assignments WHERE tag_id = ?', [id]);
     sqliteDb.run('DELETE FROM tags WHERE id = ?', [id]);
     persistDb();
@@ -605,11 +779,30 @@ app.post('/api/tags/assign', (req, res) => {
   }
 });
 
-app.post('/api/tags/unassign', (req, res) => {
+app.post('/api/tags/unassign', async (req, res) => {
   if (!dbReady) return res.status(503).json({ error: 'db not ready' });
   const { tagId, chatId } = req.body || {};
   if (!tagId || !chatId) return res.status(400).json({ error: 'tagId and chatId required' });
   try {
+    // Check if this is the Archived tag - if so, unarchive in WhatsApp too
+    const archivedTagId = getArchivedTagId();
+    if (archivedTagId && Number(tagId) === Number(archivedTagId) && waReady) {
+      try {
+        let chatObj = null;
+        try { chatObj = await client.getChatById(chatId); } catch(e) { /* fallback */ }
+        if (!chatObj) {
+          const all = await client.getChats();
+          chatObj = all.find(c=>c.id && c.id._serialized === chatId);
+        }
+        if (chatObj && chatObj.archived) {
+          await chatObj.unarchive();
+        }
+      } catch (err) {
+        console.error('Failed to unarchive chat when removing Archived tag', err);
+        // Continue with tag removal even if unarchive fails
+      }
+    }
+    
     sqliteDb.run('DELETE FROM tag_assignments WHERE tag_id = ? AND chat_id = ?', [tagId, chatId]);
     persistDb();
     io.emit('tags_updated');
@@ -624,7 +817,7 @@ app.post('/api/tags/unassign', (req, res) => {
 app.get('/api/tags/export', (req, res) => {
   if (!dbReady) return res.status(503).json({ error: 'db not ready' });
   try {
-    const tags = rowsFromExec(sqliteDb.exec('SELECT id, name, color FROM tags ORDER BY id'));
+    const tags = rowsFromExec(sqliteDb.exec('SELECT id, name, color, is_system FROM tags ORDER BY id'));
     const assigns = rowsFromExec(sqliteDb.exec('SELECT tag_id, chat_id, phone_number FROM tag_assignments'));
     res.json({ tags, assignments: assigns });
   } catch (err) {

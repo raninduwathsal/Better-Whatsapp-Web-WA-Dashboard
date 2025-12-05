@@ -128,6 +128,32 @@ socket.on('sent', ({chatId, text}) => {
   socket.emit('requestMessages');
 });
 
+socket.on('archive_success', ({ chatId }) => {
+  const c = chats.find(x => x.chatId === chatId);
+  const display = c ? (c.name || c.chatId) : chatId;
+  statusEl.textContent = `Archived ${display}`;
+  loadTagsFromServer();
+});
+
+socket.on('archive_error', ({ chatId, error }) => {
+  const c = chats.find(x => x.chatId === chatId);
+  const display = c ? (c.name || c.chatId) : chatId;
+  statusEl.textContent = `Failed to archive ${display}: ${error}`;
+});
+
+socket.on('unarchive_success', ({ chatId }) => {
+  const c = chats.find(x => x.chatId === chatId);
+  const display = c ? (c.name || c.chatId) : chatId;
+  statusEl.textContent = `Unarchived ${display}`;
+  loadTagsFromServer();
+});
+
+socket.on('unarchive_error', ({ chatId, error }) => {
+  const c = chats.find(x => x.chatId === chatId);
+  const display = c ? (c.name || c.chatId) : chatId;
+  statusEl.textContent = `Failed to unarchive ${display}: ${error}`;
+});
+
 socket.on('error', e => {
   statusEl.textContent = `Error: ${e.message || e}`;
 });
@@ -783,9 +809,16 @@ function openTagContextMenu(x, y, chatId){
   const menu = document.createElement('div'); menu.className='context-menu';
   menu.style.position='fixed'; menu.style.left = (x) + 'px'; menu.style.top = (y) + 'px'; menu.style.background='#fff'; menu.style.border='1px solid #ccc'; menu.style.borderRadius='6px'; menu.style.padding='0'; menu.style.zIndex = 9999; menu.style.minWidth='240px'; menu.style.boxShadow='0 2px 10px rgba(0,0,0,0.2)'; menu.style.overflow='hidden';
   const title = document.createElement('div'); title.style.fontWeight='bold'; title.style.padding='10px 12px'; title.style.fontSize='13px'; title.style.color='#666'; title.style.borderBottom='1px solid #eee'; title.textContent = 'Tags'; menu.appendChild(title);
-  // list tags as clickable menu items
-  if (tags && tags.length > 0) {
-    for (const t of tags){
+  
+  // Get Archived tag ID to filter it out and check archive status
+  const archivedTag = tags.find(t => t.name === 'Archived' && t.is_system);
+  const archivedTagId = archivedTag ? archivedTag.id : null;
+  const isArchived = archivedTagId ? (tagAssignments[chatId]||[]).some(id => String(id) === String(archivedTagId)) : false;
+  
+  // list tags as clickable menu items (excluding Archived tag)
+  const nonSystemTags = tags.filter(t => !(t.name === 'Archived' && t.is_system));
+  if (nonSystemTags && nonSystemTags.length > 0) {
+    for (const t of nonSystemTags){
       const isAssigned = (tagAssignments[chatId]||[]).some(id => String(id) === String(t.id));
       const row = document.createElement('div'); row.style.padding='10px 12px'; row.style.cursor='pointer'; row.style.display='flex'; row.style.alignItems='center'; row.style.userSelect='none'; row.style.fontSize='13px';
       row.style.backgroundColor = isAssigned ? '#f0f0f0' : '#fff';
@@ -843,9 +876,37 @@ function openTagContextMenu(x, y, chatId){
   });
   menu.appendChild(viewNotesRow);
 
+  // Archive action - dynamic text based on current archive state
+  const actionsTitle = document.createElement('div'); actionsTitle.style.padding='8px 12px'; actionsTitle.style.fontSize='13px'; actionsTitle.style.color='#666'; actionsTitle.style.borderTop='1px solid #eee'; actionsTitle.textContent = 'Actions'; menu.appendChild(actionsTitle);
+  const archiveRow = document.createElement('div'); archiveRow.style.padding='10px 12px'; archiveRow.style.cursor='pointer'; archiveRow.style.fontSize='13px'; archiveRow.style.userSelect='none';
+  archiveRow.textContent = isArchived ? '📂 Unarchive Chat' : '📦 Archive Chat';
+  archiveRow.addEventListener('mouseenter', ()=>{ archiveRow.style.backgroundColor = '#e8e8e8'; });
+  archiveRow.addEventListener('mouseleave', ()=>{ archiveRow.style.backgroundColor = '#fff'; });
+  archiveRow.addEventListener('click', ()=>{
+    if (currentContextMenu) currentContextMenu.remove(); currentContextMenu = null;
+    if (isArchived) {
+      unarchiveChat(chatId);
+    } else {
+      archiveChat(chatId);
+    }
+  });
+  menu.appendChild(archiveRow);
+
   document.body.appendChild(menu); currentContextMenu = menu;
   const removeMenu = ()=>{ if (currentContextMenu && currentContextMenu === menu){ currentContextMenu.remove(); currentContextMenu = null; } document.removeEventListener('click', removeMenu); };
   setTimeout(()=> document.addEventListener('click', removeMenu), 50);
+}
+
+// Archive a chat in WhatsApp and assign the Archived tag
+function archiveChat(chatId){
+  socket.emit('archiveChat', { chatId });
+  statusEl.textContent = 'Archiving chat...';
+}
+
+// Unarchive a chat in WhatsApp and remove the Archived tag
+function unarchiveChat(chatId){
+  socket.emit('unarchiveChat', { chatId });
+  statusEl.textContent = 'Unarchiving chat...';
 }
 
 function renderTagFilterChips(){
@@ -1070,7 +1131,14 @@ function renderTagsSettings(){
   titleRow.appendChild(title); titleRow.appendChild(toolbar); panel.appendChild(titleRow);
   const createRow = document.createElement('div'); createRow.style.marginTop='8px'; createRow.style.marginBottom='12px'; const createBtn = document.createElement('button'); createBtn.textContent='Create Tag'; createBtn.className='qr-btn'; createBtn.addEventListener('click', ()=>{ openTagEditor('', '#ffcc00', async (v)=>{ if (!v) return; await createTagOnServer(v.name, v.color); await loadTagsFromServer(); renderTagFilterChips(); renderTagsSettings(); }); }); createRow.appendChild(createBtn); panel.appendChild(createRow);
   if (!tags || tags.length === 0){ const empty = document.createElement('div'); empty.style.marginTop='8px'; empty.style.color='#999'; empty.textContent='No tags defined.'; panel.appendChild(empty); return; }
-  tags.forEach((t, idx)=>{ const row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.style.gap='8px'; row.style.padding='12px'; row.style.background= idx % 2 === 0 ? '#fff' : '#f9f9f9'; row.style.borderBottom='1px solid #e0e0e0'; const label = document.createElement('div'); label.style.flex='1'; label.textContent = t.name; const color = document.createElement('div'); color.style.width='24px'; color.style.height='16px'; color.style.background = t.color; color.style.border='1px solid #ccc'; const edit = document.createElement('button'); edit.className='qr-btn'; edit.textContent='Edit'; edit.addEventListener('click', ()=>{ openTagEditor(t.name, t.color, async (v)=>{ if (!v) return; await updateTagOnServer(t.id, v.name, v.color); await loadTagsFromServer(); renderTagFilterChips(); renderTagsSettings(); }); }); const del = document.createElement('button'); del.className='qr-btn'; del.textContent='Delete'; del.addEventListener('click', async ()=>{ try { const countRes = await fetch(`/api/tags/${t.id}/count`); if (!countRes.ok) throw new Error('Failed to get count'); const countData = await countRes.json(); const chatCount = countData.count || 0; const msg = chatCount > 0 ? `Delete tag "${t.name}"?\n\nThis tag is assigned to ${chatCount} chat${chatCount !== 1 ? 's' : ''}. Deleting it will remove the tag from these chats.` : `Delete tag "${t.name}"?`; if (!confirm(msg)) return; await deleteTagOnServer(t.id); await loadTagsFromServer(); renderTagFilterChips(); renderTagsSettings(); } catch (err) { console.error(err); alert('Failed to delete tag'); } }); row.appendChild(label); row.appendChild(color); row.appendChild(edit); row.appendChild(del); panel.appendChild(row); });
+  tags.forEach((t, idx)=>{ const row = document.createElement('div'); row.style.display='flex'; row.style.alignItems='center'; row.style.gap='8px'; row.style.padding='12px'; row.style.background= idx % 2 === 0 ? '#fff' : '#f9f9f9'; row.style.borderBottom='1px solid #e0e0e0'; const label = document.createElement('div'); label.style.flex='1'; label.textContent = t.name; 
+  if (t.is_system) { const badge = document.createElement('span'); badge.textContent = 'System'; badge.style.fontSize='10px'; badge.style.background='#e0e0e0'; badge.style.color='#666'; badge.style.padding='2px 6px'; badge.style.borderRadius='4px'; badge.style.marginLeft='8px'; label.appendChild(badge); }
+  const color = document.createElement('div'); color.style.width='24px'; color.style.height='16px'; color.style.background = t.color; color.style.border='1px solid #ccc'; 
+  const edit = document.createElement('button'); edit.className='qr-btn'; edit.textContent='Edit'; 
+  if (t.is_system) { edit.disabled = true; edit.style.opacity = '0.5'; edit.style.cursor = 'not-allowed'; edit.title = 'Cannot edit system tag'; } else { edit.addEventListener('click', ()=>{ openTagEditor(t.name, t.color, async (v)=>{ if (!v) return; await updateTagOnServer(t.id, v.name, v.color); await loadTagsFromServer(); renderTagFilterChips(); renderTagsSettings(); }); }); }
+  const del = document.createElement('button'); del.className='qr-btn'; del.textContent='Delete'; 
+  if (t.is_system) { del.disabled = true; del.style.opacity = '0.5'; del.style.cursor = 'not-allowed'; del.title = 'Cannot delete system tag'; } else { del.addEventListener('click', async ()=>{ try { const countRes = await fetch(`/api/tags/${t.id}/count`); if (!countRes.ok) throw new Error('Failed to get count'); const countData = await countRes.json(); const chatCount = countData.count || 0; const msg = chatCount > 0 ? `Delete tag "${t.name}"?\n\nThis tag is assigned to ${chatCount} chat${chatCount !== 1 ? 's' : ''}. Deleting it will remove the tag from these chats.` : `Delete tag "${t.name}"?`; if (!confirm(msg)) return; await deleteTagOnServer(t.id); await loadTagsFromServer(); renderTagFilterChips(); renderTagsSettings(); } catch (err) { console.error(err); alert('Failed to delete tag'); } }); }
+  row.appendChild(label); row.appendChild(color); row.appendChild(edit); row.appendChild(del); panel.appendChild(row); });
 }
 
 function getSelectedChatIds(){
