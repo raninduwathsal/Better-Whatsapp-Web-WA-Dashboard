@@ -1,90 +1,676 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Better Whatsapp</title>
-    <style>
-      body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:0;padding:0;background:#f0f2f5}
-      #qr { max-width: 320px; }
 
-      #messages { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap:12px }
-      .msg { background:white;padding:10px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer;user-select:none;position:relative;min-height:80px }
-      .msg.selected { outline:3px solid #25D366; background: linear-gradient(135deg, rgba(37,211,102,0.15) 0%, rgba(37,211,102,0.08) 100%); position:relative }
-      .msg.selected::after { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(37,211,102,0.12); border-radius:10px; pointer-events:none }
-      .meta { font-size:13px;color:#222;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between }
-      #preset { width:60%; padding:6px }
-      #sendBtn { padding:6px 10px }
-      header{display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid #e9edef;padding:10px 16px;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f0f2f5;
+      }
+      #qr {
+        max-width: 320px;
+      }
+
+      #messages {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .msg {
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+        min-height: 80px;
+      }
+      .msg.selected {
+        outline: 3px solid #25d366;
+        background: linear-gradient(
+          135deg,
+          rgba(37, 211, 102, 0.15) 0%,
+          rgba(37, 211, 102, 0.08) 100%
+        );
+        position: relative;
+      }
+      .msg.selected::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(37, 211, 102, 0.12);
+        border-radius: 10px;
+        pointer-events: none;
+      }
+      .meta {
+        font-size: 13px;
+        color: #222;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      #preset {
+        width: 60%;
+        padding: 6px;
+      }
+      #sendBtn {
+        padding: 6px 10px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        border-bottom: 1px solid #e9edef;
+        padding: 10px 16px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
 
       /* WhatsApp style bubbles */
-      .history { display:flex;flex-direction:column;gap:6px }
-      .bubble { max-width:85%; padding:8px 10px;border-radius:14px;display:inline-block;font-size:13px }
-      .bubble.left { background:#f0f0f0; border:1px solid #e0e0e0; align-self:flex-start; border-top-left-radius:4px }
-      .bubble.right { background:#dcf8c6; align-self:flex-end; border-top-right-radius:4px }
-      .bubble.left .timestamp, .bubble.right .timestamp { display:block; text-align:right; margin-top:6px; font-size:11px; color:#666 }
-      .bubble.left { color:#111 }
-      .bubble.right { color:#111 }
-      .timestamp { font-size:11px;color:#666;margin-left:6px }
-      .unread { box-shadow:0 0 0 6px rgba(37,211,102,0.08); border:2px solid #25D366 }
-      .pinBtn { position:absolute; top:8px; right:8px }
-      .muted { opacity:0.6 }
+      .history {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .bubble {
+        max-width: 85%;
+        padding: 8px 10px;
+        border-radius: 14px;
+        display: inline-block;
+        font-size: 13px;
+      }
+      .bubble.left {
+        background: #f0f0f0;
+        border: 1px solid #e0e0e0;
+        align-self: flex-start;
+        border-top-left-radius: 4px;
+      }
+      .bubble.right {
+        background: #dcf8c6;
+        align-self: flex-end;
+        border-top-right-radius: 4px;
+      }
+      .bubble.left .timestamp,
+      .bubble.right .timestamp {
+        display: block;
+        text-align: right;
+        margin-top: 6px;
+        font-size: 11px;
+        color: #666;
+      }
+      .bubble.left {
+        color: #111;
+      }
+      .bubble.right {
+        color: #111;
+      }
+      .timestamp {
+        font-size: 11px;
+        color: #666;
+        margin-left: 6px;
+      }
+      .unread {
+        box-shadow: 0 0 0 6px rgba(37, 211, 102, 0.08);
+        border: 2px solid #25d366;
+      }
+      .pinBtn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+      .muted {
+        opacity: 0.6;
+      }
       /* full chat modal */
-      .modal { position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:9999 }
-      .modal .panel { width:90%; max-width:800px; height:80%; background:#fff; border-radius:8px; padding:12px; box-shadow:0 6px 24px rgba(0,0,0,0.2); display:flex; flex-direction:column }
-      .modal .panel .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
-      .modal .panel .body { flex:1; overflow:auto; padding:8px; background:#f7f7f7; border-radius:6px }
-      .modal .panel .body img { max-width:100%; height:auto; display:block; margin:6px 0 }
-      .modal .panel .body iframe { display:block; margin:6px 0 }
+      .modal {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      .modal .panel {
+        width: 90%;
+        max-width: 800px;
+        height: 80%;
+        background: #fff;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+      }
+      .modal .panel .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .modal .panel .body {
+        flex: 1;
+        overflow: auto;
+        padding: 8px;
+        background: #f7f7f7;
+        border-radius: 6px;
+      }
+      .modal .panel .body img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 6px 0;
+      }
+      .modal .panel .body iframe {
+        display: block;
+        margin: 6px 0;
+      }
       /* sticker style in compact cards */
-      .msg .bubble img { display:inline-block }
+      .msg .bubble img {
+        display: inline-block;
+      }
       /* quick replies */
-      #quick-replies-container { margin-left:12px }
-      .qr-btn { background:#fff;border:1px solid #d1d7db;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#3b4a54;transition:all 0.15s ease;font-weight:500 }
-      .qr-btn:hover { background:#f5f6f6;border-color:#8696a0 }
-      .qr-btn.primary { background:#25D366;color:#fff;border-color:#25D366;font-weight:500 }
-      .qr-btn.primary:hover { background:#20bd5a }
+      #quick-replies-container {
+        margin-left: 12px;
+      }
+      .qr-btn {
+        background: #fff;
+        border: 1px solid #d1d7db;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        color: #3b4a54;
+        transition: all 0.15s ease;
+        font-weight: 500;
+      }
+      .qr-btn:hover {
+        background: #f5f6f6;
+        border-color: #8696a0;
+      }
+      .qr-btn.primary {
+        background: #25d366;
+        color: #fff;
+        border-color: #25d366;
+        font-weight: 500;
+      }
+      .qr-btn.primary:hover {
+        background: #20bd5a;
+      }
 
-      .modal .panel .composer { margin-top:8px; display:flex; gap:8px }
-      .modal .panel .composer input { flex:1; padding:8px }
-      .modal .panel .composer button { padding:8px 10px }
+      .modal .panel .composer {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+      }
+      .modal .panel .composer input {
+        flex: 1;
+        padding: 8px;
+      }
+      .modal .panel .composer button {
+        padding: 8px 10px;
+      }
       /* tags UI */
-      .tag-badges { display:inline-flex; align-items:center; gap:6px }
-      .tag-dot { width:12px; height:12px; border-radius:6px; display:inline-block }
-      .context-menu { box-shadow:0 6px 18px rgba(0,0,0,0.12); border-radius:6px }
-      .tag-chip { cursor:pointer;padding:6px 12px;border-radius:16px;font-size:13px;font-weight:500;border:1px solid;transition:all 0.15s ease }
-      .tag-chip:hover { transform:translateY(-1px);box-shadow:0 2px 4px rgba(0,0,0,0.1) }
+      .tag-badges {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .tag-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+        display: inline-block;
+      }
+      .context-menu {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        border-radius: 6px;
+      }
+      .tag-chip {
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid;
+        transition: all 0.15s ease;
+      }
+      .tag-chip:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
       /* sticky header so controls remain visible while scrolling */
-      header{position:sticky;top:0;z-index:1100}
-      body { padding-top:0 }
-      #qrWrap { padding:12px 16px }
-      #messages { padding:0 16px 12px 16px }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+      }
+      body {
+        padding-top: 0;
+      }
+      #qrWrap {
+        padding: 12px 16px;
+      }
+      #messages {
+        padding: 0 16px 12px 16px;
+      }
       /* sidebar slide transitions */
-      #messages { margin-left:0; transition: margin-left 0.3s ease }
-      @media (max-width:900px){ .msg{ min-height:100px } }
+      #messages {
+        margin-left: 0;
+        transition: margin-left 0.3s ease;
+      }
+      @media (max-width: 900px) {
+        .msg {
+          min-height: 100px;
+        }
+      }
+
+      /* ================================
+         DARK MODE STYLES - COMPLETE
+         ================================ */
+
+      /* Base dark mode */
+      body[data-theme="dark"] {
+        background: #0b141a !important;
+        color: #e9edef;
+      }
+
+      /* Header */
+      body[data-theme="dark"] header {
+        background: #1f2c33 !important;
+        border-bottom: 1px solid #2a3942;
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] header h2 {
+        color: #e9edef !important;
+      }
+
+      body[data-theme="dark"] header #status {
+        color: #8696a0;
+        background: #2a3942;
+      }
+
+      body[data-theme="dark"] header input::placeholder {
+        color: #8696a0;
+      }
+
+      /* ================================
+         SIDEBAR DARK MODE
+         ================================ */
+
+      /* Main sidebar container */
+      body[data-theme="dark"] #settings-sidebar {
+        background: #1f2c33 !important;
+        border-right: 1px solid #2a3942 !important;
+        color: #e9edef !important;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      /* Sidebar header */
+      body[data-theme="dark"] #settings-sidebar > div:first-child {
+        background: #1f2c33 !important;
+        border-bottom: 1px solid #2a3942 !important;
+        color: #e9edef !important;
+      }
+
+      /* Settings content container */
+      body[data-theme="dark"] #settings-content {
+        background: #1f2c33 !important;
+        color: #e9edef !important;
+      }
+
+      /* All divs inside sidebar */
+      body[data-theme="dark"] #settings-sidebar div {
+        color: #e9edef !important;
+        border-color: #2a3942 !important;
+      }
+
+      /* Toggle sections hover states */
+      body[data-theme="dark"] #settings-sidebar > div > div > div:hover {
+        background: #2a3942 !important;
+      }
+
+      /* Hamburger menu button */
+      body[data-theme="dark"] #hamburger-menu {
+        color: #e9edef !important;
+        background: transparent !important;
+      }
+
+      body[data-theme="dark"] #hamburger-menu:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      /* All text in sidebar */
+      body[data-theme="dark"] #settings-sidebar span,
+      body[data-theme="dark"] #settings-sidebar label {
+        color: #e9edef !important;
+      }
+
+      /* Input fields in sidebar */
+      body[data-theme="dark"] #settings-sidebar input,
+      body[data-theme="dark"] #settings-sidebar textarea,
+      body[data-theme="dark"] #settings-sidebar select {
+        background: #2a3942 !important;
+        border-color: #3b4a54 !important;
+        color: #e9edef !important;
+      }
+
+      /* Buttons in sidebar */
+      body[data-theme="dark"] #settings-sidebar button {
+        background: #2a3942 !important;
+        border-color: #3b4a54 !important;
+        color: #e9edef !important;
+      }
+
+      body[data-theme="dark"] #settings-sidebar button:hover {
+        background: #3b4a54 !important;
+      }
+      /* Fix white lines and borders in sidebar */
+      body[data-theme="dark"] #settings-sidebar * {
+        border-color: #2a3942 !important;
+      }
+
+      /* Tags Settings section */
+      body[data-theme="dark"] #settings-sidebar [style*="background:#f0f2f5"],
+      body[data-theme="dark"] #settings-sidebar [style*="background: #f0f2f5"],
+      body[data-theme="dark"] #settings-sidebar [style*="background:#fff"],
+      body[data-theme="dark"] #settings-sidebar [style*="background: #fff"] {
+        background: #1f2c33 !important;
+      }
+
+      /* Buttons inside sidebar */
+      body[data-theme="dark"]
+        #settings-sidebar
+        [style*="background:#fff"]
+        button {
+        background: #2a3942 !important;
+        color: #e9edef !important;
+      }
+
+      /* Any remaining white backgrounds */
+      body[data-theme="dark"] #settings-sidebar .tag-badges,
+      body[data-theme="dark"] #settings-sidebar > div > div {
+        background: #1f2c33 !important;
+      }
+
+      /* Archived section and similar system tags */
+      body[data-theme="dark"] #settings-sidebar [style*="System"] {
+        background: #1f2c33 !important;
+        color: #8696a0 !important;
+      }
+
+      /* ================================
+         MAIN CONTENT AREAS
+         ================================ */
+
+      body[data-theme="dark"] #qrWrap {
+        background: #0b141a;
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] #qrWrap p {
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] #messages {
+        background: #0b141a;
+      }
+
+      /* ================================
+         MESSAGE CARDS
+         ================================ */
+
+      body[data-theme="dark"] .msg {
+        background: #1f2c33 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] .meta {
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] .msg.selected {
+        outline: 3px solid #25d366;
+        background: linear-gradient(
+          135deg,
+          rgba(37, 211, 102, 0.2) 0%,
+          rgba(37, 211, 102, 0.1) 100%
+        ) !important;
+      }
+
+      /* ================================
+         MESSAGE BUBBLES
+         ================================ */
+
+      body[data-theme="dark"] .bubble.left {
+        background: #202c33;
+        border: 1px solid #2a3942;
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] .bubble.right {
+        background: #005c4b;
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] .timestamp {
+        color: #8696a0;
+      }
+
+      /* ================================
+         BUTTONS
+         ================================ */
+
+      body[data-theme="dark"] .qr-btn {
+        background: #2a3942 !important;
+        border-color: #3b4a54;
+        color: #e9edef !important;
+      }
+
+      body[data-theme="dark"] .qr-btn:hover {
+        background: #3b4a54 !important;
+      }
+
+      body[data-theme="dark"] .qr-btn.primary {
+        background: #25d366 !important;
+        color: #111 !important;
+      }
+
+      body[data-theme="dark"] .qr-btn.primary:hover {
+        background: #20bd5a !important;
+      }
+
+      /* ================================
+         INPUT FIELDS
+         ================================ */
+
+      body[data-theme="dark"] #preset,
+      body[data-theme="dark"] input {
+        background: #2a3942 !important;
+        border-color: #3b4a54 !important;
+        color: #e9edef !important;
+      }
+
+      /* ================================
+         MODALS
+         ================================ */
+
+      body[data-theme="dark"] .modal {
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      body[data-theme="dark"] .modal .panel {
+        background: #1f2c33 !important;
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] .modal .panel .body {
+        background: #0b141a !important;
+      }
+
+      body[data-theme="dark"] .modal .panel .header h3 {
+        color: #e9edef;
+      }
+
+      body[data-theme="dark"] .modal .panel .composer input {
+        background: #2a3942;
+        color: #e9edef;
+        border-color: #3b4a54;
+      }
+
+      /* ================================
+         TAGS AND FILTERS
+         ================================ */
+
+      body[data-theme="dark"] #tag-filter-chips {
+        background: #1f2c33 !important;
+        border-bottom: 1px solid #2a3942;
+      }
+
+      body[data-theme="dark"] .tag-chip {
+        background: #2a3942;
+        color: #e9edef;
+        border-color: #3b4a54;
+      }
+
+      body[data-theme="dark"] .tag-chip:hover {
+        background: #3b4a54;
+      }
+
+      /* ================================
+         CONTEXT MENU
+         ================================ */
+
+      body[data-theme="dark"] .context-menu {
+        background: #1f2c33 !important;
+        color: #e9edef;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+      }
+
+      /* ================================
+         SCROLLBARS
+         ================================ */
+
+      body[data-theme="dark"] ::-webkit-scrollbar {
+        background: #0b141a;
+      }
+
+      body[data-theme="dark"] ::-webkit-scrollbar-thumb {
+        background: #2a3942;
+      }
+
+      body[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+        background: #3b4a54;
+      }
+      body[data-theme="dark"] #settings-sidebar div[style*="padding"] {
+        background: #1f2c33 !important;
+      }
     </style>
   </head>
   <body>
     <header>
-      <button id="hamburger-menu" style="display:none"></button>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:40px;height:40px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:18px">B</div>
-        <h2 style="margin:0;font-size:16px;font-weight:500;color:#111">Better Whatsapp</h2>
+      <button id="hamburger-menu" style="display: none"></button>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <div
+          style="
+            width: 40px;
+            height: 40px;
+            background: #25d366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 18px;
+          "
+        >
+          B
+        </div>
+        <h2 style="margin: 0; font-size: 16px; font-weight: 500; color: #111">
+          Better Whatsapp
+        </h2>
       </div>
-      <div id="quick-replies-container" style="display:flex;align-items:center;gap:8px;margin-left:16px"></div>
-      <button id="quick-reply-add-btn" class="qr-btn" style="font-size:16px;padding:6px 10px" title="Add Quick Reply">+</button>
-      <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
-        <input id="preset" placeholder="Type message (press Enter to send)" style="padding:6px 12px;border:1px solid #d1d7db;border-radius:8px;font-size:13px;min-width:200px" />
+      <div
+        id="quick-replies-container"
+        style="display: flex; align-items: center; gap: 8px; margin-left: 16px"
+      ></div>
+      <button
+        id="quick-reply-add-btn"
+        class="qr-btn"
+        style="font-size: 16px; padding: 6px 10px"
+        title="Add Quick Reply"
+      >
+        +
+      </button>
+      <div
+        style="display: flex; align-items: center; gap: 8px; margin-left: auto"
+      >
+        <input
+          id="preset"
+          placeholder="Type message (press Enter to send)"
+          style="
+            padding: 6px 12px;
+            border: 1px solid #d1d7db;
+            border-radius: 8px;
+            font-size: 13px;
+            min-width: 200px;
+          "
+        />
         <button id="sendBtn" class="qr-btn">Send</button>
-        <button id="refresh" class="qr-btn">↻</button>
+        <button id="darkModeToggle" class="qr-btn" title="Toggle Dark Mode">
+          🌙
+        </button>
       </div>
-      <div id="status" style="font-size:13px;color:#667781;margin-left:16px;padding:4px 12px;background:#f0f2f5;border-radius:12px;white-space:nowrap">Connecting...</div>
+      <div
+        id="status"
+        style="
+          font-size: 13px;
+          color: #667781;
+          margin-left: 16px;
+          padding: 4px 12px;
+          background: #f0f2f5;
+          border-radius: 12px;
+          white-space: nowrap;
+        "
+      >
+        Connecting...
+      </div>
     </header>
 
-    <div id="tag-filter-chips" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:#fff;border-bottom:1px solid #e9edef"></div>
+    <div
+      id="tag-filter-chips"
+      style="
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: #fff;
+        border-bottom: 1px solid #e9edef;
+      "
+    ></div>
 
     <div id="qrWrap">
-      <p>Scan QR with your WhatsApp app (open WhatsApp → Menu → Linked devices → Link a device):</p>
+      <p>
+        Scan QR with your WhatsApp app (open WhatsApp → Menu → Linked devices →
+        Link a device):
+      </p>
       <img id="qr" src="" alt="QR code" />
     </div>
 
@@ -107,6 +693,31 @@
     <script src="/js/ui/contextMenu.js"></script>
     <script src="/js/ui/modals.js"></script>
     <!-- Main app initialization -->
+    <script>
+      // Dark Mode Toggle
+      const darkModeToggle = document.getElementById("darkModeToggle");
+
+      // Check for saved theme preference or default to light mode
+      const currentTheme = localStorage.getItem("theme") || "light";
+      document.body.setAttribute("data-theme", currentTheme);
+
+      // Update button icon based on current theme
+      if (currentTheme === "dark") {
+        darkModeToggle.textContent = "☀️";
+      }
+
+      // Toggle dark mode on button click
+      darkModeToggle.addEventListener("click", function () {
+        const currentTheme = document.body.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        document.body.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+
+        // Update button icon
+        darkModeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      });
+    </script>
     <script src="/js/app.js"></script>
   </body>
 </html>
