@@ -34,7 +34,7 @@ function renderChats() {
     if (AppState.selectedChats.has(c.chatId)) el.classList.add('selected');
     if (c.unreadCount > 0) el.classList.add('unread');
 
-    // Add colored left border for assigned tags
+    // Add colored left border for assigned tags (thicker border)
     const assignedIds = AppState.tagAssignments[c.chatId] || [];
     if (assignedIds.length > 0) {
       const tagColors = assignedIds.map(tid => {
@@ -42,36 +42,59 @@ function renderChats() {
         return t ? (t.color || '#999') : '#999';
       });
       if (tagColors.length === 1) {
-        el.style.borderLeft = `4px solid ${tagColors[0]}`;
+        el.style.borderLeft = `6px solid ${tagColors[0]}`;
       } else if (tagColors.length > 1) {
         const gradientStops = tagColors.map((color, idx) => {
           const start = (idx / tagColors.length) * 100;
           const end = ((idx + 1) / tagColors.length) * 100;
           return `${color} ${start}%, ${color} ${end}%`;
         }).join(', ');
-        el.style.borderLeft = `4px solid transparent`;
+        el.style.borderLeft = `6px solid transparent`;
         el.style.backgroundImage = `linear-gradient(to bottom, ${gradientStops})`;
         el.style.backgroundPosition = 'left';
-        el.style.backgroundSize = '4px 100%';
+        el.style.backgroundSize = '6px 100%';
         el.style.backgroundRepeat = 'no-repeat';
       }
+    }
+    
+    // Add hover and selection animation
+    el.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+    el.addEventListener('mouseenter', () => {
+      if (!AppState.selectedChats.has(c.chatId)) {
+        el.style.transform = 'scale(1.02)';
+        el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+      }
+    });
+    el.addEventListener('mouseleave', () => {
+      if (!AppState.selectedChats.has(c.chatId)) {
+        el.style.transform = 'scale(1)';
+        el.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+      }
+    });
+    if (AppState.selectedChats.has(c.chatId)) {
+      el.style.transform = 'scale(1.03)';
+      el.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
     }
 
     // header: phone/name + unread count
     const header = document.createElement('div');
     header.className = 'meta';
+    header.style.paddingBottom = '10px';
+    header.style.marginBottom = '10px';
+    header.style.borderBottom = '1px solid #e9edef';
     const left = document.createElement('div');
     const title = document.createElement('strong');
     title.textContent = c.name || '';
+    title.style.fontSize = '15px';
     left.appendChild(title);
 
     // show notes badge if any
     const noteCount = AppState.notesCounts[c.chatId] || 0;
     if (noteCount > 0) {
       const noteBadge = document.createElement('span');
-      noteBadge.textContent = ` 📝${noteCount}`;
-      noteBadge.style.marginLeft = '8px';
-      noteBadge.style.fontSize = '12px';
+      noteBadge.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-left:8px;margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${noteCount}`;
+      noteBadge.style.fontSize = '13px';
+      noteBadge.style.color = '#667781';
       noteBadge.title = `${noteCount} note${noteCount !== 1 ? 's' : ''}`;
       noteBadge.addEventListener('mouseenter', () => showNotesPreviewBubble(noteBadge, c.chatId));
       noteBadge.addEventListener('mouseleave', () => hideNotesPreviewBubble(noteBadge));
@@ -100,13 +123,26 @@ function renderChats() {
 
     const info = document.createElement('span');
     info.style.marginLeft = '8px';
+    info.style.fontSize = '14px';
+    info.style.color = '#667781';
     info.textContent = c.unreadCount > 0 ? `${c.unreadCount} unread` : '';
     left.appendChild(info);
     header.appendChild(left);
 
     const pinBtn = document.createElement('button');
     pinBtn.className = 'pinBtn';
-    pinBtn.textContent = AppState.pinned.has(c.chatId) ? 'Unpin' : 'Pin';
+    pinBtn.innerHTML = AppState.pinned.has(c.chatId) 
+      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>' 
+      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5m-3-2 3 3 3-3M9 4v7.586a1 1 0 0 1-.293.707l-1.414 1.414a1 1 0 0 1-.707.293H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm6 0v7.586a1 1 0 0 0 .293.707l1.414 1.414a1 1 0 0 0 .707.293H19a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2z"/></svg>';
+    pinBtn.style.background = 'none';
+    pinBtn.style.border = 'none';
+    pinBtn.style.cursor = 'pointer';
+    pinBtn.style.padding = '4px';
+    pinBtn.style.color = AppState.pinned.has(c.chatId) ? '#25D366' : '#8696a0';
+    pinBtn.style.display = 'flex';
+    pinBtn.style.alignItems = 'center';
+    pinBtn.style.justifyContent = 'center';
+    pinBtn.title = AppState.pinned.has(c.chatId) ? 'Unpin' : 'Pin';
     pinBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       if (AppState.pinned.has(c.chatId)) AppState.pinned.delete(c.chatId);
@@ -118,9 +154,14 @@ function renderChats() {
     // history (last 3 messages) as bubbles
     const hist = document.createElement('div');
     hist.className = 'history';
+    hist.style.display = 'flex';
+    hist.style.flexDirection = 'column';
+    hist.style.gap = '6px';
     for (const m of c.history) {
       const isMine = !!m.fromMe;
       const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.justifyContent = isMine ? 'flex-end' : 'flex-start';
       const bubble = document.createElement('div');
       bubble.className = 'bubble ' + (isMine ? 'right' : 'left');
 
@@ -165,17 +206,33 @@ function renderChats() {
     el.appendChild(header);
     el.appendChild(hist);
 
-    // click to open full chat / select chat
+    // Handle single and double-click
+    let clickCount = 0;
+    let clickTimer;
+    
     el.addEventListener('click', (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        if (AppState.selectedChats.has(c.chatId)) AppState.selectedChats.delete(c.chatId);
-        else AppState.selectedChats.add(c.chatId);
-      } else {
-        AppState.selectedChats.clear();
-        AppState.selectedChats.add(c.chatId);
+      clickCount++;
+      
+      if (clickCount === 1) {
+        clickTimer = setTimeout(() => {
+          // Single click - select chat
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            if (AppState.selectedChats.has(c.chatId)) AppState.selectedChats.delete(c.chatId);
+            else AppState.selectedChats.add(c.chatId);
+          } else {
+            AppState.selectedChats.clear();
+            AppState.selectedChats.add(c.chatId);
+          }
+          renderChats();
+          clickCount = 0;
+        }, 300);
+      } else if (clickCount === 2) {
+        // Double click - open full chat
+        clearTimeout(clickTimer);
+        clickCount = 0;
+        openFullChat(c.chatId, c.name || '');
       }
-      renderChats();
     });
 
     // right-click context menu

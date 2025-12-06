@@ -89,7 +89,15 @@ function renderQuickReplies() {
     btn.style.fontSize = '11px';
     btn.style.padding = '4px 8px';
     btn.addEventListener('click', () => {
-      AppState.presetInput.value = qr.text;
+      // Send the message to all selected chats
+      if (AppState.selectedChats.size === 0) {
+        alert('Please select at least one chat first');
+        return;
+      }
+      
+      for (const chatId of AppState.selectedChats) {
+        socket.emit('sendPreset', { chatId, text: qr.text });
+      }
     });
     wrapper.appendChild(btn);
   }
@@ -114,38 +122,128 @@ function renderQuickReplies() {
 function openQuickReplyEditor(initialText, onSave) {
   const modal = document.createElement('div');
   modal.className = 'modal';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  
   const panel = document.createElement('div');
   panel.className = 'panel';
+  panel.style.width = '90%';
+  panel.style.maxWidth = '500px';
+  panel.style.borderRadius = '12px';
+  panel.style.boxShadow = '0 8px 32px rgba(0,0,0,0.15)';
+  
   const header = document.createElement('div');
   header.className = 'header';
+  header.style.display = 'flex';
+  header.style.justifyContent = 'space-between';
+  header.style.alignItems = 'center';
+  header.style.paddingBottom = '12px';
+  header.style.borderBottom = '1px solid #e9edef';
+  
   const hTitle = document.createElement('div');
-  hTitle.textContent = 'Quick Reply';
+  hTitle.textContent = initialText ? 'Edit Quick Reply' : 'New Quick Reply';
+  hTitle.style.fontSize = '16px';
+  hTitle.style.fontWeight = '500';
+  hTitle.style.color = '#111';
+  
   const closeBtn = document.createElement('button');
-  closeBtn.textContent = 'Cancel';
+  closeBtn.textContent = '✕';
+  closeBtn.style.background = 'none';
+  closeBtn.style.border = 'none';
+  closeBtn.style.fontSize = '20px';
+  closeBtn.style.color = '#8696a0';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.padding = '4px 8px';
+  
   header.appendChild(hTitle);
   header.appendChild(closeBtn);
 
   const body = document.createElement('div');
   body.className = 'body';
+  body.style.padding = '16px 0';
+  
   const ta = document.createElement('textarea');
+  ta.placeholder = 'Enter your quick reply text...';
   ta.style.width = '100%';
   ta.style.height = '160px';
+  ta.style.padding = '12px';
+  ta.style.border = '1px solid #d1d7db';
+  ta.style.borderRadius = '8px';
+  ta.style.fontSize = '14px';
+  ta.style.fontFamily = 'inherit';
+  ta.style.resize = 'none';
+  ta.style.boxSizing = 'border-box';
+  ta.style.transition = 'border-color 0.2s';
   ta.value = initialText || '';
+  
+  ta.addEventListener('focus', () => {
+    ta.style.borderColor = '#25D366';
+    ta.style.outline = 'none';
+  });
+  ta.addEventListener('blur', () => {
+    ta.style.borderColor = '#d1d7db';
+  });
+  
   body.appendChild(ta);
 
   const composer = document.createElement('div');
   composer.className = 'composer';
-  const saveBtn = document.createElement('button');
-  saveBtn.textContent = 'Save';
-  saveBtn.className = 'qr-btn primary';
+  composer.style.display = 'flex';
+  composer.style.gap = '8px';
+  composer.style.justifyContent = 'flex-end';
+  composer.style.marginTop = '16px';
+  composer.style.paddingTop = '12px';
+  composer.style.borderTop = '1px solid #e9edef';
+  
   const cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.padding = '8px 16px';
+  cancelBtn.style.border = '1px solid #d1d7db';
+  cancelBtn.style.borderRadius = '8px';
+  cancelBtn.style.background = '#fff';
+  cancelBtn.style.color = '#3b4a54';
+  cancelBtn.style.cursor = 'pointer';
+  cancelBtn.style.fontSize = '14px';
+  cancelBtn.style.fontWeight = '500';
+  cancelBtn.style.transition = 'all 0.2s';
+  
+  cancelBtn.addEventListener('mouseenter', () => {
+    cancelBtn.style.backgroundColor = '#f5f6f6';
+    cancelBtn.style.borderColor = '#8696a0';
+  });
+  cancelBtn.addEventListener('mouseleave', () => {
+    cancelBtn.style.backgroundColor = '#fff';
+    cancelBtn.style.borderColor = '#d1d7db';
+  });
+  
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.style.padding = '8px 20px';
+  saveBtn.style.background = '#25D366';
+  saveBtn.style.color = '#fff';
+  saveBtn.style.border = 'none';
+  saveBtn.style.borderRadius = '8px';
+  saveBtn.style.cursor = 'pointer';
+  saveBtn.style.fontSize = '14px';
+  saveBtn.style.fontWeight = '500';
+  saveBtn.style.transition = 'all 0.2s';
+  
+  saveBtn.addEventListener('mouseenter', () => {
+    saveBtn.style.backgroundColor = '#20bd5a';
+    saveBtn.style.boxShadow = '0 2px 8px rgba(37,211,102,0.3)';
+  });
+  saveBtn.addEventListener('mouseleave', () => {
+    saveBtn.style.backgroundColor = '#25D366';
+    saveBtn.style.boxShadow = 'none';
+  });
+  
   composer.appendChild(cancelBtn);
   composer.appendChild(saveBtn);
 
   panel.appendChild(header);
   panel.appendChild(body);
   panel.appendChild(composer);
+  panel.style.padding = '16px';
+  
   modal.appendChild(panel);
   document.body.appendChild(modal);
 
@@ -156,33 +254,25 @@ function openQuickReplyEditor(initialText, onSave) {
 
   closeBtn.addEventListener('click', () => close(null));
   cancelBtn.addEventListener('click', () => close(null));
-  saveBtn.addEventListener('click', () => close(ta.value));
+  saveBtn.addEventListener('click', () => close(ta.value.trim()));
+  
+  // Focus textarea automatically
+  ta.focus();
 }
 
 // Render quick replies settings panel
 function renderQuickRepliesSettings() {
   let panel = document.getElementById('sidebar-quick-replies');
   if (!panel) {
-    const sidebar = document.getElementById('settings-sidebar');
-    if (sidebar) {
+    const contentContainer = document.getElementById('settings-content');
+    if (contentContainer) {
       panel = document.createElement('div');
       panel.id = 'sidebar-quick-replies';
       panel.style.padding = '8px';
       panel.style.borderBottom = '1px solid #eee';
-      sidebar.appendChild(panel);
+      contentContainer.appendChild(panel);
     } else {
-      panel = document.getElementById('quick-replies-settings-panel');
-      if (!panel) {
-        panel = document.createElement('div');
-        panel.id = 'quick-replies-settings-panel';
-        panel.style.border = '1px solid #ddd';
-        panel.style.padding = '8px';
-        panel.style.marginTop = '8px';
-        panel.style.background = '#fff';
-        const header = document.querySelector('header');
-        if (header) header.parentNode.insertBefore(panel, header.nextSibling);
-        else document.body.appendChild(panel);
-      }
+      return;
     }
   }
 

@@ -210,6 +210,31 @@ function openTagContextMenu(x, y, chatId) {
   actionsTitle.textContent = 'Actions';
   menu.appendChild(actionsTitle);
 
+  // Open full chat action
+  const openChatRow = document.createElement('div');
+  openChatRow.style.padding = '10px 12px';
+  openChatRow.style.cursor = 'pointer';
+  openChatRow.style.fontSize = '13px';
+  openChatRow.style.userSelect = 'none';
+  openChatRow.textContent = '💬 Open Full Chat';
+
+  openChatRow.addEventListener('mouseenter', () => {
+    openChatRow.style.backgroundColor = '#e8e8e8';
+  });
+  openChatRow.addEventListener('mouseleave', () => {
+    openChatRow.style.backgroundColor = '#fff';
+  });
+  openChatRow.addEventListener('click', () => {
+    if (AppState.currentContextMenu) {
+      AppState.currentContextMenu.remove();
+      AppState.currentContextMenu = null;
+    }
+    const c = AppState.chats.find(x => x.chatId === chatId);
+    const title = c ? (c.name || c.chatId) : chatId;
+    openFullChat(chatId, title);
+  });
+  menu.appendChild(openChatRow);
+
   const archiveRow = document.createElement('div');
   archiveRow.style.padding = '10px 12px';
   archiveRow.style.cursor = 'pointer';

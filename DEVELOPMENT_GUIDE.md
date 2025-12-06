@@ -4,11 +4,45 @@
 
 This is a modular WhatsApp Web dashboard built with Node.js, Express, Socket.io, and vanilla JavaScript. The codebase is organized into feature-based modules for easy maintenance and scalability.
 
+## Frontend Development Mode (No WhatsApp Required)
+
+For frontend developers who want to work on the UI without connecting to WhatsApp, use the mock server:
+
+```bash
+npm run dev-frontend
+```
+
+This starts a mock server that:
+- ✅ Serves the frontend with sample chats and messages
+- ✅ Provides fully functional API endpoints for tags, notes, and quick replies
+- ✅ Simulates Socket.io events (chats, ready, tags_updated)
+- ✅ Saves changes to `mock-data.json` (persists across restarts)
+- ✅ No WhatsApp authentication required
+- ✅ Perfect for UI/UX development and testing
+
+**Mock Data:**
+- 6 sample chats with realistic messages
+- 5 tags (including system "Archived" tag)
+- Tag assignments
+- 3 notes
+- 5 quick replies
+
+You can edit `mock-data.json` to customize the sample data. All changes made through the UI (creating tags, notes, etc.) are saved back to this file.
+
+**Mock Server Features:**
+- Full CRUD operations for tags, notes, quick replies
+- Tag assignment/unassignment
+- Archive/unarchive functionality
+- Send message simulation (adds to chat history)
+- Import/export functionality
+
 ## Project Structure
 
 ```
 Better-Whatsapp-Web-WA-Dashboard/
-├── index.js                          # Main entry point
+├── index.js                          # Main entry point (WhatsApp mode)
+├── mock-server.js                    # Mock server (dev mode)
+├── mock-data.json                    # Sample data for mock server
 ├── package.json                      # Project dependencies & scripts
 ├── data.sqlite                       # SQLite database (auto-created)
 ├── server/                           # Backend modules

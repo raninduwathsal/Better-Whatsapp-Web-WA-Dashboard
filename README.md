@@ -1,4 +1,4 @@
-# Better Whatsapp Web (WA Dash)
+# Better Whatsapp Web
 
 Simple local app to connect your WhatsApp by scanning a QR code, display recent messages in a grid, select a chat card (or click "Send to selected") to send a preset reply.
 
@@ -11,7 +11,7 @@ Requirements
 Install
 
 ```bash
-cd c:/Users/Waths/Desktop/wa-dash-v2
+cd c:/Users/Waths/Desktop/better-whatsapp
 npm install
 ```
 
@@ -38,7 +38,7 @@ Notes & next steps
   - confirmations and delivery status
   - authentication & access control for the web UI
 
-## Better WhatsApp (wa-dash-v2)
+## Better Whatsapp
 
 Better WhatsApp is a local desktop web app that connects to your WhatsApp account via WhatsApp Web and provides a compact, productivity-focused dashboard for handling messages and sending preset replies.
 
@@ -90,7 +90,7 @@ Requirements
 Install
 
 ````markdown
-# Better Whatsapp Web (WA Dash)
+# Better Whatsapp Web
 
 Simple local app to connect your WhatsApp by scanning a QR code, display recent messages in a grid, select a chat card (or click "Send to selected") to send a preset reply.
 
@@ -104,7 +104,7 @@ Requirements
 Install
 
 ```bash
-cd c:/Users/Waths/Desktop/wa-dash-v2
+cd c:/Users/Waths/Desktop/better-whatsapp
 npm install
 ```
 
@@ -127,7 +127,7 @@ How it works
 - After authentication the UI hides the QR and shows messages in a compact grid.
 - Click a chat card to select it. Type a preset reply in the input and click "Send to selected".
 
-## Better WhatsApp (wa-dash-v2)
+## Better Whatsapp
 
 Better WhatsApp is a local desktop web app that connects to your WhatsApp account via WhatsApp Web and provides a compact, productivity-focused dashboard for handling messages and sending preset replies.
 

@@ -1,0 +1,487 @@
+{
+  "chats": [
+    {
+      "chatId": "1234567890@c.us",
+      "name": "John Doe",
+      "unreadCount": 3,
+      "lastTimestamp": 1733500000,
+      "history": [
+        {
+          "id": "msg1",
+          "from": "1234567890@c.us",
+          "body": "Hey, are you available for a quick call?",
+          "timestamp": 1733499900,
+          "fromMe": false,
+          "hasMedia": false
+        },
+        {
+          "id": "msg2",
+          "from": "me@c.us",
+          "body": "Sure, give me 5 minutes 👍",
+          "timestamp": 1733499950,
+          "fromMe": true,
+          "hasMedia": false
+        },
+        {
+          "id": "msg3",
+          "from": "1234567890@c.us",
+          "body": "Perfect, thanks! 😊",
+          "timestamp": 1733500000,
+          "fromMe": false,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "9876543210@c.us",
+      "name": "Jane Smith",
+      "unreadCount": 0,
+      "lastTimestamp": 1733490000,
+      "history": [
+        {
+          "id": "msg4",
+          "from": "me@c.us",
+          "body": "Did you receive the documents?",
+          "timestamp": 1733489800,
+          "fromMe": true,
+          "hasMedia": false
+        },
+        {
+          "id": "msg5",
+          "from": "9876543210@c.us",
+          "body": "Yes, reviewing them now 📄",
+          "timestamp": 1733490000,
+          "fromMe": false,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "5551234567@c.us",
+      "name": "Support Team",
+      "unreadCount": 1,
+      "lastTimestamp": 1733495000,
+      "history": [
+        {
+          "id": "msg6",
+          "from": "5551234567@c.us",
+          "body": "Your ticket #12345 has been updated ✅",
+          "timestamp": 1733495000,
+          "fromMe": false,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "1112223333@c.us",
+      "name": "Marketing Group",
+      "unreadCount": 0,
+      "lastTimestamp": 1733480000,
+      "history": [
+        {
+          "id": "msg7",
+          "from": "me@c.us",
+          "body": "Let's schedule a meeting for next week",
+          "timestamp": 1733479800,
+          "fromMe": true,
+          "hasMedia": false
+        },
+        {
+          "id": "msg8",
+          "from": "1112223333@c.us",
+          "body": "Tuesday at 2 PM works for me 📅",
+          "timestamp": 1733479900,
+          "fromMe": false,
+          "hasMedia": false
+        },
+        {
+          "id": "msg9",
+          "from": "me@c.us",
+          "body": "Great! I'll send the calendar invite 🎉",
+          "timestamp": 1733480000,
+          "fromMe": true,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "4445556666@c.us",
+      "name": "Alex Johnson",
+      "unreadCount": 5,
+      "lastTimestamp": 1733505000,
+      "history": [
+        {
+          "id": "msg10",
+          "from": "4445556666@c.us",
+          "body": "Can you help with the project? 🚀",
+          "timestamp": 1733504800,
+          "fromMe": false,
+          "hasMedia": false
+        },
+        {
+          "id": "msg11",
+          "from": "4445556666@c.us",
+          "body": "I'm stuck on the deployment 😞",
+          "timestamp": 1733504900,
+          "fromMe": false,
+          "hasMedia": false
+        },
+        {
+          "id": "msg12",
+          "from": "4445556666@c.us",
+          "body": "Please let me know ASAP ⏰",
+          "timestamp": 1733505000,
+          "fromMe": false,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "7778889999@c.us",
+      "name": "Sarah Williams",
+      "unreadCount": 0,
+      "lastTimestamp": 1733470000,
+      "history": [
+        {
+          "id": "msg13",
+          "from": "me@c.us",
+          "body": "Thanks for the update! 💯",
+          "timestamp": 1733470000,
+          "fromMe": true,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "2223334444@c.us",
+      "name": "Design Team",
+      "unreadCount": 2,
+      "lastTimestamp": 1733510000,
+      "history": [
+        {
+          "id": "msg14",
+          "from": "2223334444@c.us",
+          "body": "Check out the new mockups! 🎨",
+          "timestamp": 1733509800,
+          "fromMe": false,
+          "hasMedia": true,
+          "mimetype": "image/png",
+          "filename": "mockups.png",
+          "isSticker": false
+        },
+        {
+          "id": "msg15",
+          "from": "me@c.us",
+          "body": "Love the colors! ❤️",
+          "timestamp": 1733509900,
+          "fromMe": true,
+          "hasMedia": false
+        },
+        {
+          "id": "msg16",
+          "from": "2223334444@c.us",
+          "body": "Here's the full design file 📦",
+          "timestamp": 1733510000,
+          "fromMe": false,
+          "hasMedia": true,
+          "mimetype": "application/pdf",
+          "filename": "design-system.pdf",
+          "isSticker": false
+        }
+      ]
+    },
+    {
+      "chatId": "3334445555@c.us",
+      "name": "👨‍💼 CEO",
+      "unreadCount": 1,
+      "lastTimestamp": 1733515000,
+      "history": [
+        {
+          "id": "msg17",
+          "from": "3334445555@c.us",
+          "body": "Good morning! 🌅 Quick sync at 10 AM?",
+          "timestamp": 1733514800,
+          "fromMe": false,
+          "hasMedia": false
+        },
+        {
+          "id": "msg18",
+          "from": "me@c.us",
+          "body": "10 AM works! ✅",
+          "timestamp": 1733515000,
+          "fromMe": true,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "4445556666@c.us",
+      "name": "📋 To Do Items",
+      "unreadCount": 0,
+      "lastTimestamp": 1733520000,
+      "history": [
+        {
+          "id": "msg19",
+          "from": "me@c.us",
+          "body": "📝 TO DO:\n1. Review PR #456\n2. Update documentation\n3. Deploy to staging\n4. Send report to client",
+          "timestamp": 1733519800,
+          "fromMe": true,
+          "hasMedia": false
+        },
+        {
+          "id": "msg20",
+          "from": "4445556666@c.us",
+          "body": "Added to my list! 📌",
+          "timestamp": 1733520000,
+          "fromMe": false,
+          "hasMedia": false
+        }
+      ]
+    },
+    {
+      "chatId": "5556667777@c.us",
+      "name": "Media Share Group",
+      "unreadCount": 0,
+      "lastTimestamp": 1733525000,
+      "history": [
+        {
+          "id": "msg21",
+          "from": "5556667777@c.us",
+          "body": "Check this image! 🖼️",
+          "timestamp": 1733524800,
+          "fromMe": false,
+          "hasMedia": true,
+          "mimetype": "image/jpeg",
+          "filename": "screenshot.jpg",
+          "isSticker": false
+        },
+        {
+          "id": "msg22",
+          "from": "me@c.us",
+          "body": "🔊 Voice message (30s)",
+          "timestamp": 1733524900,
+          "fromMe": true,
+          "hasMedia": true,
+          "mimetype": "audio/ogg",
+          "filename": "voice-message.ogg",
+          "isSticker": false
+        },
+        {
+          "id": "msg23",
+          "from": "5556667777@c.us",
+          "body": "Annual Report 2024",
+          "timestamp": 1733525000,
+          "fromMe": false,
+          "hasMedia": true,
+          "mimetype": "application/pdf",
+          "filename": "annual_report_2024.pdf",
+          "isSticker": false
+        }
+      ]
+    },
+    {
+      "chatId": "6667778888@c.us",
+      "name": "🎉 Event Planning",
+      "unreadCount": 3,
+      "lastTimestamp": 1733530000,
+      "history": [
+        {
+          "id": "msg24",
+          "from": "6667778888@c.us",
+          "body": "Team party next Friday! 🎊🍾",
+          "timestamp": 1733529800,
+          "fromMe": false,
+          "hasMedia": false
+        },
+        {
+          "id": "msg25",
+          "from": "me@c.us",
+          "body": "Count me in! 🙋‍♂️",
+          "timestamp": 1733529900,
+          "fromMe": true,
+          "hasMedia": false
+        },
+        {
+          "id": "msg26",
+          "from": "6667778888@c.us",
+          "body": "Awesome! See you there 🎈",
+          "timestamp": 1733530000,
+          "fromMe": false,
+          "hasMedia": false
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "id": 1,
+      "name": "Archived",
+      "color": "#808080",
+      "is_system": 1
+    },
+    {
+      "id": 2,
+      "name": "Important",
+      "color": "#FF5733",
+      "is_system": 0
+    },
+    {
+      "id": 3,
+      "name": "Work",
+      "color": "#3498DB",
+      "is_system": 0
+    },
+    {
+      "id": 4,
+      "name": "Personal",
+      "color": "#2ECC71",
+      "is_system": 0
+    },
+    {
+      "id": 5,
+      "name": "Follow-up",
+      "color": "#F39C12",
+      "is_system": 0
+    },
+    {
+      "id": 6,
+      "name": "Urgent",
+      "color": "#E74C3C",
+      "is_system": 0
+    }
+  ],
+  "tagAssignments": [
+    {
+      "id": 1,
+      "tag_id": 2,
+      "chat_id": "1234567890@c.us",
+      "phone_number": "1234567890"
+    },
+    {
+      "id": 2,
+      "tag_id": 3,
+      "chat_id": "1234567890@c.us",
+      "phone_number": "1234567890"
+    },
+    {
+      "id": 3,
+      "tag_id": 3,
+      "chat_id": "1112223333@c.us",
+      "phone_number": "1112223333"
+    },
+    {
+      "id": 4,
+      "tag_id": 4,
+      "chat_id": "7778889999@c.us",
+      "phone_number": "7778889999"
+    },
+    {
+      "id": 5,
+      "tag_id": 5,
+      "chat_id": "4445556666@c.us",
+      "phone_number": "4445556666"
+    },
+    {
+      "id": 6,
+      "tag_id": 6,
+      "chat_id": "2223334444@c.us",
+      "phone_number": "2223334444"
+    },
+    {
+      "id": 7,
+      "tag_id": 3,
+      "chat_id": "3334445555@c.us",
+      "phone_number": "3334445555"
+    },
+    {
+      "id": 8,
+      "tag_id": 2,
+      "chat_id": "5556667777@c.us",
+      "phone_number": "5556667777"
+    }
+  ],
+  "notes": [
+    {
+      "id": 1,
+      "chat_id": "1234567890@c.us",
+      "phone_number": "1234567890",
+      "text": "Important client - always respond within 1 hour",
+      "created_at": "2024-12-01T10:00:00Z",
+      "updated_at": null
+    },
+    {
+      "id": 2,
+      "chat_id": "4445556666@c.us",
+      "phone_number": "4445556666",
+      "text": "Working on project X\nDeadline: Dec 15\nStatus: In Progress",
+      "created_at": "2024-12-03T14:30:00Z",
+      "updated_at": null
+    },
+    {
+      "id": 3,
+      "chat_id": "9876543210@c.us",
+      "phone_number": "9876543210",
+      "text": "Send monthly report",
+      "created_at": "2024-12-02T09:00:00Z",
+      "updated_at": null
+    },
+    {
+      "id": 4,
+      "chat_id": "2223334444@c.us",
+      "phone_number": "2223334444",
+      "text": "Design review: 2 PM tomorrow\nPrep mockups and specs",
+      "created_at": "2024-12-05T16:20:00Z",
+      "updated_at": null
+    },
+    {
+      "id": 5,
+      "chat_id": "3334445555@c.us",
+      "phone_number": "3334445555",
+      "text": "Daily standup: 10 AM\nQuarterly review: Dec 15",
+      "created_at": "2024-12-04T11:00:00Z",
+      "updated_at": null
+    }
+  ],
+  "quickReplies": [
+    {
+      "id": 1,
+      "text": "Thanks for your message! I'll get back to you soon.",
+      "created_at": "2024-12-01T08:00:00Z"
+    },
+    {
+      "id": 2,
+      "text": "Can we schedule a call to discuss this further?",
+      "created_at": "2024-12-01T08:05:00Z"
+    },
+    {
+      "id": 3,
+      "text": "I'm currently unavailable. Will respond within 24 hours.",
+      "created_at": "2024-12-01T08:10:00Z"
+    },
+    {
+      "id": 4,
+      "text": "Please send me more details about this.",
+      "created_at": "2024-12-01T08:15:00Z"
+    },
+    {
+      "id": 5,
+      "text": "Thanks! This has been resolved.",
+      "created_at": "2024-12-01T08:20:00Z"
+    },
+    {
+      "id": 6,
+      "text": "Perfect! See you then 👍",
+      "created_at": "2024-12-02T10:00:00Z"
+    },
+    {
+      "id": 7,
+      "text": "Working on it now, will have updates by end of day",
+      "created_at": "2024-12-02T14:30:00Z"
+    },
+    {
+      "id": 8,
+      "text": "Thanks for the reminder! 🙏",
+      "created_at": "2024-12-03T09:45:00Z"
+    }
+  ]
+}

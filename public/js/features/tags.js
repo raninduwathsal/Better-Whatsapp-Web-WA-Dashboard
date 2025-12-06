@@ -89,36 +89,162 @@ async function unassignTagOnServer(tagId, chatId) {
 function openTagEditor(initialName, initialColor, onSave) {
   const modal = document.createElement('div');
   modal.className = 'modal';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  
   const panel = document.createElement('div');
   panel.className = 'panel';
+  panel.style.width = '90%';
+  panel.style.maxWidth = '400px';
+  panel.style.borderRadius = '12px';
+  panel.style.boxShadow = '0 8px 32px rgba(0,0,0,0.15)';
+  panel.style.padding = '16px';
+  
   const header = document.createElement('div');
   header.className = 'header';
+  header.style.display = 'flex';
+  header.style.justifyContent = 'space-between';
+  header.style.alignItems = 'center';
+  header.style.paddingBottom = '12px';
+  header.style.borderBottom = '1px solid #e9edef';
+  
   const hTitle = document.createElement('div');
   hTitle.textContent = initialName ? 'Edit Tag' : 'New Tag';
+  hTitle.style.fontSize = '16px';
+  hTitle.style.fontWeight = '500';
+  hTitle.style.color = '#111';
+  
   const closeBtn = document.createElement('button');
-  closeBtn.textContent = 'Cancel';
+  closeBtn.textContent = '✕';
+  closeBtn.style.background = 'none';
+  closeBtn.style.border = 'none';
+  closeBtn.style.fontSize = '20px';
+  closeBtn.style.color = '#8696a0';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.padding = '4px 8px';
+  
   header.appendChild(hTitle);
   header.appendChild(closeBtn);
+  
   const body = document.createElement('div');
   body.className = 'body';
+  body.style.padding = '16px 0';
+  body.style.display = 'flex';
+  body.style.flexDirection = 'column';
+  body.style.gap = '12px';
+  
   const nameInput = document.createElement('input');
   nameInput.placeholder = 'Tag name';
   nameInput.value = initialName || '';
+  nameInput.style.width = '100%';
+  nameInput.style.padding = '10px 12px';
+  nameInput.style.border = '1px solid #d1d7db';
+  nameInput.style.borderRadius = '8px';
+  nameInput.style.fontSize = '14px';
+  nameInput.style.boxSizing = 'border-box';
+  nameInput.style.transition = 'border-color 0.2s';
+  
+  nameInput.addEventListener('focus', () => {
+    nameInput.style.borderColor = '#25D366';
+    nameInput.style.outline = 'none';
+  });
+  nameInput.addEventListener('blur', () => {
+    nameInput.style.borderColor = '#d1d7db';
+  });
+  
+  const colorWrapper = document.createElement('div');
+  colorWrapper.style.display = 'flex';
+  colorWrapper.style.alignItems = 'center';
+  colorWrapper.style.gap = '12px';
+  
+  const colorLabel = document.createElement('label');
+  colorLabel.textContent = 'Color:';
+  colorLabel.style.fontSize = '14px';
+  colorLabel.style.fontWeight = '500';
+  colorLabel.style.color = '#3b4a54';
+  colorLabel.style.minWidth = '50px';
+  
   const colorInput = document.createElement('input');
   colorInput.type = 'color';
   colorInput.value = initialColor || '#ffcc00';
+  colorInput.style.width = '50px';
+  colorInput.style.height = '40px';
+  colorInput.style.border = '1px solid #d1d7db';
+  colorInput.style.borderRadius = '8px';
+  colorInput.style.cursor = 'pointer';
+  
+  const colorDisplay = document.createElement('div');
+  colorDisplay.style.width = '40px';
+  colorDisplay.style.height = '40px';
+  colorDisplay.style.borderRadius = '8px';
+  colorDisplay.style.background = colorInput.value;
+  colorDisplay.style.border = '2px solid #e9edef';
+  colorDisplay.style.flexShrink = '0';
+  
+  colorInput.addEventListener('change', () => {
+    colorDisplay.style.background = colorInput.value;
+  });
+  
+  colorWrapper.appendChild(colorLabel);
+  colorWrapper.appendChild(colorInput);
+  colorWrapper.appendChild(colorDisplay);
+  
   body.appendChild(nameInput);
-  body.appendChild(document.createElement('br'));
-  body.appendChild(colorInput);
+  body.appendChild(colorWrapper);
+  
   const composer = document.createElement('div');
   composer.className = 'composer';
-  const saveBtn = document.createElement('button');
-  saveBtn.textContent = 'Save';
-  saveBtn.className = 'qr-btn primary';
+  composer.style.display = 'flex';
+  composer.style.gap = '8px';
+  composer.style.justifyContent = 'flex-end';
+  composer.style.marginTop = '16px';
+  composer.style.paddingTop = '12px';
+  composer.style.borderTop = '1px solid #e9edef';
+  
   const cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.padding = '8px 16px';
+  cancelBtn.style.border = '1px solid #d1d7db';
+  cancelBtn.style.borderRadius = '8px';
+  cancelBtn.style.background = '#fff';
+  cancelBtn.style.color = '#3b4a54';
+  cancelBtn.style.cursor = 'pointer';
+  cancelBtn.style.fontSize = '14px';
+  cancelBtn.style.fontWeight = '500';
+  cancelBtn.style.transition = 'all 0.2s';
+  
+  cancelBtn.addEventListener('mouseenter', () => {
+    cancelBtn.style.backgroundColor = '#f5f6f6';
+    cancelBtn.style.borderColor = '#8696a0';
+  });
+  cancelBtn.addEventListener('mouseleave', () => {
+    cancelBtn.style.backgroundColor = '#fff';
+    cancelBtn.style.borderColor = '#d1d7db';
+  });
+  
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.style.padding = '8px 20px';
+  saveBtn.style.background = '#25D366';
+  saveBtn.style.color = '#fff';
+  saveBtn.style.border = 'none';
+  saveBtn.style.borderRadius = '8px';
+  saveBtn.style.cursor = 'pointer';
+  saveBtn.style.fontSize = '14px';
+  saveBtn.style.fontWeight = '500';
+  saveBtn.style.transition = 'all 0.2s';
+  
+  saveBtn.addEventListener('mouseenter', () => {
+    saveBtn.style.backgroundColor = '#20bd5a';
+    saveBtn.style.boxShadow = '0 2px 8px rgba(37,211,102,0.3)';
+  });
+  saveBtn.addEventListener('mouseleave', () => {
+    saveBtn.style.backgroundColor = '#25D366';
+    saveBtn.style.boxShadow = 'none';
+  });
+  
   composer.appendChild(cancelBtn);
   composer.appendChild(saveBtn);
+  
   panel.appendChild(header);
   panel.appendChild(body);
   panel.appendChild(composer);
@@ -129,9 +255,17 @@ function openTagEditor(initialName, initialColor, onSave) {
     document.body.removeChild(modal);
     onSave(v);
   }
+  
   closeBtn.addEventListener('click', () => close(null));
   cancelBtn.addEventListener('click', () => close(null));
-  saveBtn.addEventListener('click', () => close({ name: nameInput.value.trim(), color: colorInput.value }));
+  saveBtn.addEventListener('click', () => {
+    if (nameInput.value.trim()) {
+      close({ name: nameInput.value.trim(), color: colorInput.value });
+    }
+  });
+  
+  // Focus name input automatically
+  nameInput.focus();
 }
 
 // Render tag filter chips
@@ -198,26 +332,15 @@ function renderTagFilterChips() {
 function renderTagsSettings() {
   let panel = document.getElementById('sidebar-tags');
   if (!panel) {
-    const sidebar = document.getElementById('settings-sidebar');
-    if (sidebar) {
+    const contentContainer = document.getElementById('settings-content');
+    if (contentContainer) {
       panel = document.createElement('div');
       panel.id = 'sidebar-tags';
       panel.style.padding = '8px';
       panel.style.borderBottom = '1px solid #eee';
-      sidebar.appendChild(panel);
+      contentContainer.appendChild(panel);
     } else {
-      panel = document.getElementById('tags-settings-panel');
-      if (!panel) {
-        panel = document.createElement('div');
-        panel.id = 'tags-settings-panel';
-        panel.style.border = '1px solid #ddd';
-        panel.style.padding = '8px';
-        panel.style.marginTop = '8px';
-        panel.style.background = '#fff';
-        const header = document.querySelector('header');
-        if (header) header.parentNode.insertBefore(panel, header.nextSibling);
-        else document.body.appendChild(panel);
-      }
+      return;
     }
   }
 
@@ -361,39 +484,54 @@ function renderTagsSettings() {
     row.style.alignItems = 'center';
     row.style.gap = '8px';
     row.style.padding = '12px';
-    row.style.background = idx % 2 === 0 ? '#fff' : '#f9f9f9';
-    row.style.borderBottom = '1px solid #e0e0e0';
+    row.style.background = t.color;
+    row.style.borderRadius = '6px';
+    row.style.marginBottom = '6px';
+    row.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+    
+    // Calculate text color based on background brightness
+    const rgb = parseInt(t.color.slice(1), 16);
+    const r = (rgb >> 16) & 255;
+    const g = (rgb >> 8) & 255;
+    const b = rgb & 255;
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    const textColor = brightness > 128 ? '#000' : '#fff';
 
     const label = document.createElement('div');
     label.style.flex = '1';
+    label.style.color = textColor;
+    label.style.fontWeight = '500';
     label.textContent = t.name;
     if (t.is_system) {
       const badge = document.createElement('span');
       badge.textContent = 'System';
       badge.style.fontSize = '10px';
-      badge.style.background = '#e0e0e0';
-      badge.style.color = '#666';
+      badge.style.background = textColor === '#fff' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)';
+      badge.style.color = textColor;
       badge.style.padding = '2px 6px';
       badge.style.borderRadius = '4px';
       badge.style.marginLeft = '8px';
       label.appendChild(badge);
     }
 
-    const color = document.createElement('div');
-    color.style.width = '24px';
-    color.style.height = '16px';
-    color.style.background = t.color;
-    color.style.border = '1px solid #ccc';
-
     const edit = document.createElement('button');
     edit.className = 'qr-btn';
     edit.textContent = 'Edit';
+    edit.style.color = textColor;
+    edit.style.borderColor = textColor;
+    edit.style.backgroundColor = textColor === '#fff' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
     if (t.is_system) {
       edit.disabled = true;
       edit.style.opacity = '0.5';
       edit.style.cursor = 'not-allowed';
       edit.title = 'Cannot edit system tag';
     } else {
+      edit.addEventListener('mouseenter', () => {
+        edit.style.backgroundColor = textColor === '#fff' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)';
+      });
+      edit.addEventListener('mouseleave', () => {
+        edit.style.backgroundColor = textColor === '#fff' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
+      });
       edit.addEventListener('click', () => {
         openTagEditor(t.name, t.color, async (v) => {
           if (!v) return;
@@ -408,12 +546,21 @@ function renderTagsSettings() {
     const del = document.createElement('button');
     del.className = 'qr-btn';
     del.textContent = 'Delete';
+    del.style.color = textColor;
+    del.style.borderColor = textColor;
+    del.style.backgroundColor = textColor === '#fff' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
     if (t.is_system) {
       del.disabled = true;
       del.style.opacity = '0.5';
       del.style.cursor = 'not-allowed';
       del.title = 'Cannot delete system tag';
     } else {
+      del.addEventListener('mouseenter', () => {
+        del.style.backgroundColor = textColor === '#fff' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)';
+      });
+      del.addEventListener('mouseleave', () => {
+        del.style.backgroundColor = textColor === '#fff' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
+      });
       del.addEventListener('click', async () => {
         try {
           const countRes = await fetch(`/api/tags/${t.id}/count`);
@@ -436,7 +583,6 @@ function renderTagsSettings() {
     }
 
     row.appendChild(label);
-    row.appendChild(color);
     row.appendChild(edit);
     row.appendChild(del);
     panel.appendChild(row);

@@ -79,6 +79,8 @@ function createSettingsSidebar() {
   sidebar.style.zIndex = '1000';
   sidebar.style.transition = 'left 0.3s ease';
   sidebar.style.boxShadow = '2px 0 10px rgba(0,0,0,0.1)';
+  sidebar.style.display = 'flex';
+  sidebar.style.flexDirection = 'column';
 
   document.body.appendChild(sidebar);
 
@@ -89,6 +91,13 @@ function createSettingsSidebar() {
   sidebarHeader.style.fontWeight = 'bold';
   sidebarHeader.textContent = 'Settings';
   sidebar.appendChild(sidebarHeader);
+
+  // Create toggles container (fixed at top)
+  const togglesContainer = document.createElement('div');
+  togglesContainer.style.display = 'flex';
+  togglesContainer.style.flexDirection = 'column';
+  togglesContainer.style.borderBottom = '1px solid #ddd';
+  togglesContainer.style.flexShrink = '0';
 
   // Tags settings toggle
   const tagsToggle = document.createElement('div');
@@ -110,7 +119,7 @@ function createSettingsSidebar() {
     tagsChevron.textContent = AppState.tagsSettingsOpen ? '▲' : '▼';
     renderTagsSettings();
   });
-  sidebar.appendChild(tagsToggle);
+  togglesContainer.appendChild(tagsToggle);
 
   // Notes settings toggle
   const notesToggle = document.createElement('div');
@@ -132,7 +141,7 @@ function createSettingsSidebar() {
     notesChevron.textContent = AppState.notesSettingsOpen ? '▲' : '▼';
     renderNotesSettings();
   });
-  sidebar.appendChild(notesToggle);
+  togglesContainer.appendChild(notesToggle);
 
   // Quick Replies settings toggle
   const quickRepliesToggle = document.createElement('div');
@@ -154,7 +163,17 @@ function createSettingsSidebar() {
     quickRepliesChevron.textContent = AppState.quickRepliesSettingsOpen ? '▲' : '▼';
     renderQuickRepliesSettings();
   });
-  sidebar.appendChild(quickRepliesToggle);
+  togglesContainer.appendChild(quickRepliesToggle);
+
+  sidebar.appendChild(togglesContainer);
+
+  // Create content container (scrollable)
+  const contentContainer = document.createElement('div');
+  contentContainer.id = 'settings-content';
+  contentContainer.style.flex = '1';
+  contentContainer.style.overflowY = 'auto';
+  contentContainer.style.padding = '8px 0';
+  sidebar.appendChild(contentContainer);
 
   // Setup hamburger menu button
   const existingHamburger = document.getElementById('hamburger-menu');

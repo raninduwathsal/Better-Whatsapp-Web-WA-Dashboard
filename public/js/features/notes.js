@@ -67,48 +67,117 @@ async function deleteNoteOnServer(id) {
 function openNotesModal(chatId, title) {
   const modal = document.createElement('div');
   modal.className = 'modal';
+  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  
   const panel = document.createElement('div');
   panel.className = 'panel';
+  panel.style.width = '90%';
+  panel.style.maxWidth = '600px';
+  panel.style.borderRadius = '12px';
+  panel.style.boxShadow = '0 8px 32px rgba(0,0,0,0.15)';
+  panel.style.padding = '16px';
+  panel.style.display = 'flex';
+  panel.style.flexDirection = 'column';
+  panel.style.height = '70vh';
+  
   const header = document.createElement('div');
   header.className = 'header';
+  header.style.display = 'flex';
+  header.style.justifyContent = 'space-between';
+  header.style.alignItems = 'center';
+  header.style.paddingBottom = '12px';
+  header.style.borderBottom = '1px solid #e9edef';
+  header.style.marginBottom = '16px';
+  
   const hTitle = document.createElement('div');
   hTitle.textContent = `Notes for ${title}`;
+  hTitle.style.fontSize = '16px';
+  hTitle.style.fontWeight = '500';
+  hTitle.style.color = '#111';
+  
   const closeBtn = document.createElement('button');
-  closeBtn.textContent = 'Close';
+  closeBtn.textContent = '✕';
+  closeBtn.style.background = 'none';
+  closeBtn.style.border = 'none';
+  closeBtn.style.fontSize = '20px';
+  closeBtn.style.color = '#8696a0';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.padding = '4px 8px';
+  
   header.appendChild(hTitle);
   header.appendChild(closeBtn);
 
-  const body = document.createElement('div');
-  body.className = 'body';
-  body.style.display = 'flex';
-  body.style.flexDirection = 'column';
-  body.style.gap = '8px';
-
   const composer = document.createElement('div');
   composer.className = 'composer';
+  composer.style.display = 'flex';
+  composer.style.gap = '8px';
+  composer.style.marginBottom = '12px';
+  composer.style.flexShrink = '0';
+  
   const ta = document.createElement('textarea');
   ta.placeholder = 'Add a note...';
-  ta.style.width = '100%';
+  ta.style.flex = '1';
   ta.style.height = '80px';
-  ta.style.padding = '8px';
-  ta.style.border = '1px solid #ddd';
-  ta.style.borderRadius = '4px';
+  ta.style.padding = '10px 12px';
+  ta.style.border = '1px solid #d1d7db';
+  ta.style.borderRadius = '8px';
   ta.style.fontFamily = 'inherit';
+  ta.style.fontSize = '14px';
+  ta.style.resize = 'none';
+  ta.style.boxSizing = 'border-box';
+  ta.style.transition = 'border-color 0.2s';
+  
+  ta.addEventListener('focus', () => {
+    ta.style.borderColor = '#25D366';
+    ta.style.outline = 'none';
+  });
+  ta.addEventListener('blur', () => {
+    ta.style.borderColor = '#d1d7db';
+  });
+  
   const addBtn = document.createElement('button');
-  addBtn.textContent = 'Add Note';
-  addBtn.className = 'qr-btn primary';
+  addBtn.textContent = 'Add';
+  addBtn.style.padding = '10px 16px';
+  addBtn.style.background = '#25D366';
+  addBtn.style.color = '#fff';
+  addBtn.style.border = 'none';
+  addBtn.style.borderRadius = '8px';
+  addBtn.style.cursor = 'pointer';
+  addBtn.style.fontSize = '14px';
+  addBtn.style.fontWeight = '500';
+  addBtn.style.transition = 'all 0.2s';
+  addBtn.style.flexShrink = '0';
+  
+  addBtn.addEventListener('mouseenter', () => {
+    addBtn.style.backgroundColor = '#20bd5a';
+    addBtn.style.boxShadow = '0 2px 8px rgba(37,211,102,0.3)';
+  });
+  addBtn.addEventListener('mouseleave', () => {
+    addBtn.style.backgroundColor = '#25D366';
+    addBtn.style.boxShadow = 'none';
+  });
+  
   composer.appendChild(ta);
   composer.appendChild(addBtn);
 
+  const body = document.createElement('div');
+  body.className = 'body';
+  body.style.flex = '1';
+  body.style.overflowY = 'auto';
+  body.style.display = 'flex';
+  body.style.flexDirection = 'column';
+  body.style.gap = '8px';
+  body.style.paddingRight = '4px';
+
   const notesList = document.createElement('div');
-  notesList.style.flex = '1';
-  notesList.style.overflowY = 'auto';
-  notesList.style.marginTop = '8px';
+  notesList.style.display = 'flex';
+  notesList.style.flexDirection = 'column';
+  notesList.style.gap = '8px';
 
   panel.appendChild(header);
   panel.appendChild(composer);
-  panel.appendChild(body);
   body.appendChild(notesList);
+  panel.appendChild(body);
   modal.appendChild(panel);
   document.body.appendChild(modal);
 
@@ -142,9 +211,10 @@ function renderNotesList(container, chatId, notes) {
   container.innerHTML = '';
   if (!notes || notes.length === 0) {
     const empty = document.createElement('div');
-    empty.style.color = '#999';
+    empty.style.color = '#8696a0';
     empty.style.textAlign = 'center';
-    empty.style.padding = '20px';
+    empty.style.padding = '32px 16px';
+    empty.style.fontSize = '14px';
     empty.textContent = 'No notes yet';
     container.appendChild(empty);
     return;
@@ -152,35 +222,66 @@ function renderNotesList(container, chatId, notes) {
 
   for (const note of notes) {
     const noteEl = document.createElement('div');
-    noteEl.style.padding = '8px';
-    noteEl.style.background = '#f9f9f9';
-    noteEl.style.border = '1px solid #e0e0e0';
-    noteEl.style.borderRadius = '4px';
-    noteEl.style.marginBottom = '8px';
+    noteEl.style.padding = '12px';
+    noteEl.style.background = '#f7f7f7';
+    noteEl.style.border = '1px solid #e9edef';
+    noteEl.style.borderRadius = '8px';
+    noteEl.style.transition = 'all 0.2s';
+
+    noteEl.addEventListener('mouseenter', () => {
+      noteEl.style.backgroundColor = '#f0f0f0';
+      noteEl.style.borderColor = '#d1d7db';
+    });
+    noteEl.addEventListener('mouseleave', () => {
+      noteEl.style.backgroundColor = '#f7f7f7';
+      noteEl.style.borderColor = '#e9edef';
+    });
 
     const text = document.createElement('div');
-    text.style.marginBottom = '4px';
+    text.style.marginBottom = '8px';
+    text.style.color = '#111';
+    text.style.fontSize = '14px';
+    text.style.lineHeight = '1.4';
+    text.style.wordWrap = 'break-word';
     text.textContent = note.text;
     noteEl.appendChild(text);
 
     const controls = document.createElement('div');
     controls.style.display = 'flex';
-    controls.style.gap = '8px';
+    controls.style.gap = '12px';
     controls.style.fontSize = '12px';
+    controls.style.alignItems = 'center';
+    controls.style.justifyContent = 'space-between';
 
     const timestamp = document.createElement('span');
-    timestamp.style.color = '#999';
+    timestamp.style.color = '#8696a0';
+    timestamp.style.fontSize = '12px';
     timestamp.textContent = new Date(note.created_at).toLocaleString();
     controls.appendChild(timestamp);
+
+    const buttonsWrapper = document.createElement('div');
+    buttonsWrapper.style.display = 'flex';
+    buttonsWrapper.style.gap = '8px';
 
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Edit';
     editBtn.style.background = 'none';
     editBtn.style.border = 'none';
-    editBtn.style.color = '#007AFF';
+    editBtn.style.color = '#25D366';
     editBtn.style.cursor = 'pointer';
-    editBtn.style.padding = '0';
+    editBtn.style.padding = '4px 8px';
     editBtn.style.fontSize = '12px';
+    editBtn.style.fontWeight = '500';
+    editBtn.style.transition = 'all 0.2s';
+    editBtn.style.borderRadius = '4px';
+    
+    editBtn.addEventListener('mouseenter', () => {
+      editBtn.style.background = 'rgba(37,211,102,0.1)';
+    });
+    editBtn.addEventListener('mouseleave', () => {
+      editBtn.style.background = 'none';
+    });
+    
     editBtn.addEventListener('click', () => {
       const newText = prompt('Edit note:', note.text);
       if (newText && newText.trim()) {
@@ -191,16 +292,27 @@ function renderNotesList(container, chatId, notes) {
         });
       }
     });
-    controls.appendChild(editBtn);
+    buttonsWrapper.appendChild(editBtn);
 
     const delBtn = document.createElement('button');
     delBtn.textContent = 'Delete';
     delBtn.style.background = 'none';
     delBtn.style.border = 'none';
-    delBtn.style.color = '#FF3B30';
+    delBtn.style.color = '#E74C3C';
     delBtn.style.cursor = 'pointer';
-    delBtn.style.padding = '0';
+    delBtn.style.padding = '4px 8px';
     delBtn.style.fontSize = '12px';
+    delBtn.style.fontWeight = '500';
+    delBtn.style.transition = 'all 0.2s';
+    delBtn.style.borderRadius = '4px';
+    
+    delBtn.addEventListener('mouseenter', () => {
+      delBtn.style.background = 'rgba(231,76,60,0.1)';
+    });
+    delBtn.addEventListener('mouseleave', () => {
+      delBtn.style.background = 'none';
+    });
+    
     delBtn.addEventListener('click', async () => {
       if (confirm('Delete this note?')) {
         await deleteNoteOnServer(note.id);
@@ -209,8 +321,9 @@ function renderNotesList(container, chatId, notes) {
         renderNotesList(container, chatId, notes);
       }
     });
-    controls.appendChild(delBtn);
+    buttonsWrapper.appendChild(delBtn);
 
+    controls.appendChild(buttonsWrapper);
     noteEl.appendChild(controls);
     container.appendChild(noteEl);
   }
@@ -274,26 +387,15 @@ function hideNotesPreviewBubble(anchorEl) {
 function renderNotesSettings() {
   let panel = document.getElementById('sidebar-notes');
   if (!panel) {
-    const sidebar = document.getElementById('settings-sidebar');
-    if (sidebar) {
+    const contentContainer = document.getElementById('settings-content');
+    if (contentContainer) {
       panel = document.createElement('div');
       panel.id = 'sidebar-notes';
       panel.style.padding = '8px';
       panel.style.borderBottom = '1px solid #eee';
-      sidebar.appendChild(panel);
+      contentContainer.appendChild(panel);
     } else {
-      panel = document.getElementById('notes-settings-panel');
-      if (!panel) {
-        panel = document.createElement('div');
-        panel.id = 'notes-settings-panel';
-        panel.style.border = '1px solid #ddd';
-        panel.style.padding = '8px';
-        panel.style.marginTop = '8px';
-        panel.style.background = '#fff';
-        const header = document.querySelector('header');
-        if (header) header.parentNode.insertBefore(panel, header.nextSibling);
-        else document.body.appendChild(panel);
-      }
+      return;
     }
   }
 
