@@ -39,7 +39,7 @@ function renderChats() {
     if (assignedIds.length > 0) {
       const tagColors = assignedIds.map(tid => {
         const t = AppState.tags.find(x => Number(x.id) === Number(tid));
-        return t ? (t.color || '#999') : '#999';
+        return t ? (t.color || 'var(--text-secondary)') : 'var(--text-secondary)';
       });
       if (tagColors.length === 1) {
         el.style.borderLeft = `6px solid ${tagColors[0]}`;
@@ -66,7 +66,8 @@ function renderChats() {
     el.addEventListener('mouseenter', () => {
       if (!AppState.selectedChats.has(c.chatId)) {
         el.style.transform = 'scale(1.02)';
-        el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'; // Keep shadow as is, or use var if needed, but shadows are usually fine
+
       }
       // Show notes preview if this chat has notes
       if (noteCount > 0 && typeof showNotesPreviewBubble === 'function') {
@@ -76,7 +77,7 @@ function renderChats() {
     el.addEventListener('mouseleave', () => {
       if (!AppState.selectedChats.has(c.chatId)) {
         el.style.transform = 'scale(1)';
-        el.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+        el.style.boxShadow = 'var(--shadow-card)';
       }
       // Hide notes preview
       if (noteCount > 0 && typeof hideNotesPreviewBubble === 'function') {
@@ -93,7 +94,7 @@ function renderChats() {
     header.className = 'meta';
     header.style.paddingBottom = '10px';
     header.style.marginBottom = '10px';
-    header.style.borderBottom = '1px solid #e9edef';
+    header.style.borderBottom = '1px solid var(--border-light)';
     const left = document.createElement('div');
     const title = document.createElement('strong');
     title.textContent = c.name || '';
@@ -105,7 +106,7 @@ function renderChats() {
       const noteBadge = document.createElement('span');
       noteBadge.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-left:8px;margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${noteCount}`;
       noteBadge.style.fontSize = '13px';
-      noteBadge.style.color = '#667781';
+      noteBadge.style.color = 'var(--text-secondary)';
       noteBadge.title = `${noteCount} note${noteCount !== 1 ? 's' : ''}`;
       left.appendChild(noteBadge);
     }
@@ -124,7 +125,7 @@ function renderChats() {
       dot.style.width = '12px';
       dot.style.height = '12px';
       dot.style.borderRadius = '6px';
-      dot.style.background = t.color || '#999';
+      dot.style.background = t.color || 'var(--text-secondary)';
       dot.style.marginRight = '6px';
       badgeWrap.appendChild(dot);
     }
@@ -133,7 +134,7 @@ function renderChats() {
     const info = document.createElement('span');
     info.style.marginLeft = '8px';
     info.style.fontSize = '14px';
-    info.style.color = '#667781';
+    info.style.color = 'var(--text-secondary)';
     info.textContent = c.unreadCount > 0 ? `${c.unreadCount} unread` : '';
     left.appendChild(info);
     header.appendChild(left);
@@ -147,7 +148,7 @@ function renderChats() {
     pinBtn.style.border = 'none';
     pinBtn.style.cursor = 'pointer';
     pinBtn.style.padding = '4px';
-    pinBtn.style.color = AppState.pinned.has(c.chatId) ? '#25D366' : '#8696a0';
+    pinBtn.style.color = AppState.pinned.has(c.chatId) ? 'var(--color-accent)' : 'var(--text-secondary)';
     pinBtn.style.display = 'flex';
     pinBtn.style.alignItems = 'center';
     pinBtn.style.justifyContent = 'center';

@@ -76,8 +76,8 @@ function createSettingsSidebar() {
   sidebar.style.top = '60px';
   sidebar.style.width = '300px';
   sidebar.style.height = 'calc(100vh - 60px)';
-  sidebar.style.background = '#fff';
-  sidebar.style.borderRight = '1px solid #ddd';
+  sidebar.style.background = 'var(--bg-card)';
+  sidebar.style.borderRight = '1px solid var(--border-medium)';
   sidebar.style.overflowY = 'auto';
   sidebar.style.zIndex = '1000';
   sidebar.style.transition = 'left 0.3s ease';
@@ -90,7 +90,7 @@ function createSettingsSidebar() {
   // Create settings header in sidebar
   const sidebarHeader = document.createElement('div');
   sidebarHeader.style.padding = '12px';
-  sidebarHeader.style.borderBottom = '1px solid #ddd';
+  sidebarHeader.style.borderBottom = '1px solid var(--border-medium)';
   sidebarHeader.style.fontWeight = 'bold';
   sidebarHeader.textContent = 'Settings';
   sidebar.appendChild(sidebarHeader);
@@ -99,13 +99,13 @@ function createSettingsSidebar() {
   const togglesContainer = document.createElement('div');
   togglesContainer.style.display = 'flex';
   togglesContainer.style.flexDirection = 'column';
-  togglesContainer.style.borderBottom = '1px solid #ddd';
+  togglesContainer.style.borderBottom = '1px solid var(--border-medium)';
   togglesContainer.style.flexShrink = '0';
 
   // Tags settings toggle
   const tagsToggle = document.createElement('div');
   tagsToggle.style.padding = '8px 12px';
-  tagsToggle.style.borderBottom = '1px solid #eee';
+  tagsToggle.style.borderBottom = '1px solid var(--border-light)';
   tagsToggle.style.cursor = 'pointer';
   tagsToggle.style.display = 'flex';
   tagsToggle.style.justifyContent = 'space-between';
@@ -127,7 +127,7 @@ function createSettingsSidebar() {
   // Notes settings toggle
   const notesToggle = document.createElement('div');
   notesToggle.style.padding = '8px 12px';
-  notesToggle.style.borderBottom = '1px solid #eee';
+  notesToggle.style.borderBottom = '1px solid var(--border-light)';
   notesToggle.style.cursor = 'pointer';
   notesToggle.style.display = 'flex';
   notesToggle.style.justifyContent = 'space-between';
@@ -149,7 +149,7 @@ function createSettingsSidebar() {
   // Quick Replies settings toggle
   const quickRepliesToggle = document.createElement('div');
   quickRepliesToggle.style.padding = '8px 12px';
-  quickRepliesToggle.style.borderBottom = '1px solid #eee';
+  quickRepliesToggle.style.borderBottom = '1px solid var(--border-light)';
   quickRepliesToggle.style.cursor = 'pointer';
   quickRepliesToggle.style.display = 'flex';
   quickRepliesToggle.style.justifyContent = 'space-between';
@@ -171,20 +171,20 @@ function createSettingsSidebar() {
   // Keyboard Shortcuts button
   const shortcutsBtn = document.createElement('div');
   shortcutsBtn.style.padding = '8px 12px';
-  shortcutsBtn.style.borderBottom = '1px solid #eee';
+  shortcutsBtn.style.borderBottom = '1px solid var(--border-light)';
   shortcutsBtn.style.cursor = 'pointer';
   shortcutsBtn.style.display = 'flex';
   shortcutsBtn.style.justifyContent = 'space-between';
   shortcutsBtn.style.alignItems = 'center';
-  shortcutsBtn.style.background = '#f0f2f5';
+  shortcutsBtn.style.background = 'var(--bg-status)';
   shortcutsBtn.textContent = '⌨️ Keyboard Shortcuts';
   shortcutsBtn.style.fontWeight = '500';
-  shortcutsBtn.style.color = '#25D366';
+  shortcutsBtn.style.color = 'var(--color-accent)';
   shortcutsBtn.addEventListener('mouseenter', () => {
-    shortcutsBtn.style.backgroundColor = '#e8e8e8';
+    shortcutsBtn.style.backgroundColor = 'var(--bg-card-hover)';
   });
   shortcutsBtn.addEventListener('mouseleave', () => {
-    shortcutsBtn.style.backgroundColor = '#f0f2f5';
+    shortcutsBtn.style.backgroundColor = 'var(--bg-status)';
   });
   shortcutsBtn.addEventListener('click', () => {
     showShortcutsGuide();
@@ -194,20 +194,20 @@ function createSettingsSidebar() {
   // Logout button
   const logoutBtn = document.createElement('div');
   logoutBtn.style.padding = '8px 12px';
-  logoutBtn.style.borderBottom = '1px solid #eee';
+  logoutBtn.style.borderBottom = '1px solid var(--border-light)';
   logoutBtn.style.cursor = 'pointer';
   logoutBtn.style.display = 'flex';
   logoutBtn.style.justifyContent = 'space-between';
   logoutBtn.style.alignItems = 'center';
-  logoutBtn.style.background = '#fff';
+  logoutBtn.style.background = 'var(--bg-card)';
   logoutBtn.textContent = '🚪 Logout from WhatsApp';
   logoutBtn.style.fontWeight = '500';
   logoutBtn.style.color = '#e74c3c';
   logoutBtn.addEventListener('mouseenter', () => {
-    logoutBtn.style.backgroundColor = '#fee';
+    logoutBtn.style.backgroundColor = 'var(--bg-card-hover)';
   });
   logoutBtn.addEventListener('mouseleave', () => {
-    logoutBtn.style.backgroundColor = '#fff';
+    logoutBtn.style.backgroundColor = 'var(--bg-card)';
   });
   logoutBtn.addEventListener('click', async () => {
     if (confirm('Are you sure you want to logout from WhatsApp? You will need to scan the QR code again.')) {
@@ -248,7 +248,7 @@ function createSettingsSidebar() {
     existingHamburger.style.cursor = 'pointer';
     existingHamburger.style.padding = '8px 12px';
     existingHamburger.style.marginRight = '12px';
-    existingHamburger.style.color = '#54656f';
+    existingHamburger.style.color = 'var(--text-secondary)';
     existingHamburger.addEventListener('click', () => toggleSidebar());
   }
 
