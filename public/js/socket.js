@@ -29,16 +29,54 @@ socket.on('qr', dataUrl => {
 socket.on('ready', () => {
   AppState.statusEl.textContent = 'WhatsApp Ready';
   document.getElementById('qrWrap').style.display = 'none';
+  hideLoadingOverlay();
 });
 
 socket.on('not_ready', () => {
   AppState.statusEl.textContent = 'WhatsApp initializing...';
+  showLoadingOverlay('Initializing WhatsApp...');
 });
+
+socket.on('authenticated', () => {
+  AppState.statusEl.textContent = 'Authenticated, loading...';
+  showLoadingOverlay('Authenticated. Loading chats...');
+});
+
+socket.on('loading_screen', (percent, message) => {
+  showLoadingOverlay(message || 'Loading...', percent);
+});
+
+// Helper to manage loading overlay
+function showLoadingOverlay(message, percent = 0) {
+  const overlay = document.getElementById('loading-overlay');
+  const text = overlay.querySelector('.loading-text');
+  const bar = document.getElementById('loading-progress');
+
+  if (overlay.style.display !== 'flex') {
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+  }
+
+  if (message) text.textContent = message;
+  if (percent) bar.style.width = `${percent}%`;
+}
+
+function hideLoadingOverlay() {
+  const overlay = document.getElementById('loading-overlay');
+  overlay.style.opacity = '0';
+  setTimeout(() => {
+    overlay.style.display = 'none';
+  }, 300);
+}
 
 // Chat handlers
 socket.on('chats', list => {
   AppState.chats = list || [];
   renderChats();
+  // If we get chats, we can assume loading is mostly done if not already hidden
+  if (AppState.chats.length > 0) {
+    hideLoadingOverlay();
+  }
 });
 
 socket.on('sent', ({ chatId, text }) => {
