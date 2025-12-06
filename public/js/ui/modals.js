@@ -48,7 +48,7 @@ function openFullChat(chatId, title) {
       closeBtn.click();
     }
   };
-  
+
   document.addEventListener('keydown', handleFullChatKeydown);
 
   // request full chat from server
@@ -101,7 +101,7 @@ function renderFullChatBody(container, messages) {
         if (m.media.filename) {
           const fn = document.createElement('div');
           fn.style.fontSize = '12px';
-          fn.style.color = '#666';
+          fn.style.color = 'var(--text-secondary)';
           fn.textContent = m.media.filename;
           bubble.appendChild(fn);
         }

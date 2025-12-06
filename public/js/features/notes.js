@@ -67,43 +67,44 @@ async function deleteNoteOnServer(id) {
 function openNotesModal(chatId, title) {
   const modal = document.createElement('div');
   modal.className = 'modal';
-  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-  
+  modal.style.backgroundColor = 'var(--overlay-modal)';
+
   const panel = document.createElement('div');
   panel.className = 'panel';
   panel.style.width = '90%';
   panel.style.maxWidth = '600px';
   panel.style.borderRadius = '12px';
-  panel.style.boxShadow = '0 8px 32px rgba(0,0,0,0.15)';
+  panel.style.backgroundColor = 'var(--bg-card)';
+  panel.style.boxShadow = 'var(--shadow-modal)';
   panel.style.padding = '16px';
   panel.style.display = 'flex';
   panel.style.flexDirection = 'column';
   panel.style.height = '70vh';
-  
+
   const header = document.createElement('div');
   header.className = 'header';
   header.style.display = 'flex';
   header.style.justifyContent = 'space-between';
   header.style.alignItems = 'center';
   header.style.paddingBottom = '12px';
-  header.style.borderBottom = '1px solid #e9edef';
+  header.style.borderBottom = '1px solid var(--border-light)';
   header.style.marginBottom = '16px';
-  
+
   const hTitle = document.createElement('div');
   hTitle.textContent = `Notes for ${title}`;
   hTitle.style.fontSize = '16px';
   hTitle.style.fontWeight = '500';
-  hTitle.style.color = '#111';
-  
+  hTitle.style.color = 'var(--text-primary)';
+
   const closeBtn = document.createElement('button');
   closeBtn.textContent = '✕';
   closeBtn.style.background = 'none';
   closeBtn.style.border = 'none';
   closeBtn.style.fontSize = '20px';
-  closeBtn.style.color = '#8696a0';
+  closeBtn.style.color = 'var(--text-secondary)';
   closeBtn.style.cursor = 'pointer';
   closeBtn.style.padding = '4px 8px';
-  
+
   header.appendChild(hTitle);
   header.appendChild(closeBtn);
 
@@ -113,32 +114,34 @@ function openNotesModal(chatId, title) {
   composer.style.gap = '8px';
   composer.style.marginBottom = '12px';
   composer.style.flexShrink = '0';
-  
+
   const ta = document.createElement('textarea');
   ta.placeholder = 'Add a note...';
   ta.style.flex = '1';
   ta.style.height = '80px';
   ta.style.padding = '10px 12px';
-  ta.style.border = '1px solid #d1d7db';
+  ta.style.background = 'var(--bg-input)';
+  ta.style.color = 'var(--text-primary)';
+  ta.style.border = '1px solid var(--border-medium)';
   ta.style.borderRadius = '8px';
   ta.style.fontFamily = 'inherit';
   ta.style.fontSize = '14px';
   ta.style.resize = 'none';
   ta.style.boxSizing = 'border-box';
   ta.style.transition = 'border-color 0.2s';
-  
+
   ta.addEventListener('focus', () => {
-    ta.style.borderColor = '#25D366';
+    ta.style.borderColor = 'var(--color-accent)';
     ta.style.outline = 'none';
   });
   ta.addEventListener('blur', () => {
-    ta.style.borderColor = '#d1d7db';
+    ta.style.borderColor = 'var(--border-medium)';
   });
-  
+
   const addBtn = document.createElement('button');
   addBtn.textContent = 'Add (Ctrl+Enter)';
   addBtn.style.padding = '10px 16px';
-  addBtn.style.background = '#25D366';
+  addBtn.style.background = 'var(--color-accent)';
   addBtn.style.color = '#fff';
   addBtn.style.border = 'none';
   addBtn.style.borderRadius = '8px';
@@ -147,16 +150,16 @@ function openNotesModal(chatId, title) {
   addBtn.style.fontWeight = '500';
   addBtn.style.transition = 'all 0.2s';
   addBtn.style.flexShrink = '0';
-  
+
   addBtn.addEventListener('mouseenter', () => {
-    addBtn.style.backgroundColor = '#20bd5a';
+    addBtn.style.backgroundColor = 'var(--color-accent-hover)';
     addBtn.style.boxShadow = '0 2px 8px rgba(37,211,102,0.3)';
   });
   addBtn.addEventListener('mouseleave', () => {
-    addBtn.style.backgroundColor = '#25D366';
+    addBtn.style.backgroundColor = 'var(--color-accent)';
     addBtn.style.boxShadow = 'none';
   });
-  
+
   composer.appendChild(ta);
   composer.appendChild(addBtn);
 
@@ -184,7 +187,7 @@ function openNotesModal(chatId, title) {
   closeBtn.addEventListener('click', () => {
     document.body.removeChild(modal);
   });
-  
+
   const handleModalKeydown = (e) => {
     if (e.ctrlKey && e.key === 'Enter') {
       e.preventDefault();
@@ -194,7 +197,7 @@ function openNotesModal(chatId, title) {
       closeBtn.click();
     }
   };
-  
+
   document.addEventListener('keydown', handleModalKeydown);
 
   addBtn.addEventListener('click', async () => {
@@ -223,7 +226,7 @@ function renderNotesList(container, chatId, notes) {
   container.innerHTML = '';
   if (!notes || notes.length === 0) {
     const empty = document.createElement('div');
-    empty.style.color = '#8696a0';
+    empty.style.color = 'var(--text-secondary)';
     empty.style.textAlign = 'center';
     empty.style.padding = '32px 16px';
     empty.style.fontSize = '14px';
@@ -235,23 +238,23 @@ function renderNotesList(container, chatId, notes) {
   for (const note of notes) {
     const noteEl = document.createElement('div');
     noteEl.style.padding = '12px';
-    noteEl.style.background = '#f7f7f7';
-    noteEl.style.border = '1px solid #e9edef';
+    noteEl.style.background = 'var(--bg-card-hover)';
+    noteEl.style.border = '1px solid var(--border-light)';
     noteEl.style.borderRadius = '8px';
     noteEl.style.transition = 'all 0.2s';
 
     noteEl.addEventListener('mouseenter', () => {
-      noteEl.style.backgroundColor = '#f0f0f0';
-      noteEl.style.borderColor = '#d1d7db';
+      noteEl.style.backgroundColor = 'var(--bg-card)';
+      noteEl.style.borderColor = 'var(--border-medium)';
     });
     noteEl.addEventListener('mouseleave', () => {
-      noteEl.style.backgroundColor = '#f7f7f7';
-      noteEl.style.borderColor = '#e9edef';
+      noteEl.style.backgroundColor = 'var(--bg-card-hover)';
+      noteEl.style.borderColor = 'var(--border-light)';
     });
 
     const text = document.createElement('div');
     text.style.marginBottom = '8px';
-    text.style.color = '#111';
+    text.style.color = 'var(--text-primary)';
     text.style.fontSize = '14px';
     text.style.lineHeight = '1.4';
     text.style.wordWrap = 'break-word';
@@ -266,7 +269,7 @@ function renderNotesList(container, chatId, notes) {
     controls.style.justifyContent = 'space-between';
 
     const timestamp = document.createElement('span');
-    timestamp.style.color = '#8696a0';
+    timestamp.style.color = 'var(--text-secondary)';
     timestamp.style.fontSize = '12px';
     timestamp.textContent = new Date(note.created_at).toLocaleString();
     controls.appendChild(timestamp);
@@ -279,21 +282,21 @@ function renderNotesList(container, chatId, notes) {
     editBtn.textContent = 'Edit';
     editBtn.style.background = 'none';
     editBtn.style.border = 'none';
-    editBtn.style.color = '#25D366';
+    editBtn.style.color = 'var(--color-accent)';
     editBtn.style.cursor = 'pointer';
     editBtn.style.padding = '4px 8px';
     editBtn.style.fontSize = '12px';
     editBtn.style.fontWeight = '500';
     editBtn.style.transition = 'all 0.2s';
     editBtn.style.borderRadius = '4px';
-    
+
     editBtn.addEventListener('mouseenter', () => {
       editBtn.style.background = 'rgba(37,211,102,0.1)';
     });
     editBtn.addEventListener('mouseleave', () => {
       editBtn.style.background = 'none';
     });
-    
+
     editBtn.addEventListener('click', () => {
       const newText = prompt('Edit note:', note.text);
       if (newText && newText.trim()) {
@@ -317,14 +320,14 @@ function renderNotesList(container, chatId, notes) {
     delBtn.style.fontWeight = '500';
     delBtn.style.transition = 'all 0.2s';
     delBtn.style.borderRadius = '4px';
-    
+
     delBtn.addEventListener('mouseenter', () => {
       delBtn.style.background = 'rgba(231,76,60,0.1)';
     });
     delBtn.addEventListener('mouseleave', () => {
       delBtn.style.background = 'none';
     });
-    
+
     delBtn.addEventListener('click', async () => {
       if (confirm('Delete this note?')) {
         await deleteNoteOnServer(note.id);
@@ -344,7 +347,7 @@ function renderNotesList(container, chatId, notes) {
 // Show notes preview bubble
 function showNotesPreviewBubble(anchorEl, chatId) {
   hideNotesPreviewBubble(anchorEl);
-  
+
   // Set a timeout to show preview after 1.5 seconds
   const timeoutId = setTimeout(() => {
     loadNotesForChat(chatId).then(notes => {
@@ -352,8 +355,8 @@ function showNotesPreviewBubble(anchorEl, chatId) {
 
       const bubble = document.createElement('div');
       bubble.style.position = 'fixed';
-      bubble.style.background = '#fff';
-      bubble.style.border = '1px solid #ddd';
+      bubble.style.background = 'var(--bg-card)';
+      bubble.style.border = '1px solid var(--border-medium)';
       bubble.style.borderRadius = '6px';
       bubble.style.padding = '8px';
       bubble.style.maxWidth = '200px';
@@ -377,7 +380,7 @@ function showNotesPreviewBubble(anchorEl, chatId) {
         const line = document.createElement('div');
         line.style.marginBottom = '6px';
         line.style.paddingBottom = '6px';
-        line.style.borderBottom = '1px solid #eee';
+        line.style.borderBottom = '1px solid var(--border-light)';
         line.textContent = note.text.substring(0, 50) + (note.text.length > 50 ? '...' : '');
         bubble.appendChild(line);
       }
@@ -386,7 +389,7 @@ function showNotesPreviewBubble(anchorEl, chatId) {
       anchorEl._noteBubble = bubble;
     });
   }, 1500);
-  
+
   // Store the timeout ID so we can cancel it if mouse leaves
   anchorEl._noteTimeout = timeoutId;
 }
@@ -398,11 +401,11 @@ function hideNotesPreviewBubble(anchorEl) {
     clearTimeout(anchorEl._noteTimeout);
     anchorEl._noteTimeout = null;
   }
-  
+
   if (anchorEl && anchorEl._noteBubble) {
     try {
       anchorEl._noteBubble.remove();
-    } catch (e) {}
+    } catch (e) { }
     anchorEl._noteBubble = null;
   }
 }
@@ -416,7 +419,7 @@ function renderNotesSettings() {
       panel = document.createElement('div');
       panel.id = 'sidebar-notes';
       panel.style.padding = '8px';
-      panel.style.borderBottom = '1px solid #eee';
+      panel.style.borderBottom = '1px solid var(--border-light)';
       contentContainer.appendChild(panel);
     } else {
       return;
@@ -457,7 +460,7 @@ function renderNotesSettings() {
 
   const info = document.createElement('div');
   info.style.marginTop = '8px';
-  info.style.color = '#666';
+  info.style.color = 'var(--text-secondary)';
   info.style.fontSize = '12px';
   info.textContent = 'Export creates a JSON backup of all notes. Import will append notes to matching chats using chatId or phone number fallback.';
   panel.appendChild(info);

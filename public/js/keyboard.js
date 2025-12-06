@@ -145,7 +145,7 @@ function navigateChats(direction) {
   const cards = Array.from(messagesEl.querySelectorAll('.msg'));
   if (cards.length === 0) return;
 
-  let currentIndex = keyboardFocusedChatId 
+  let currentIndex = keyboardFocusedChatId
     ? cards.findIndex(c => c.dataset.chatId === keyboardFocusedChatId)
     : -1;
 
@@ -160,12 +160,12 @@ function navigateChats(direction) {
     const cardHeight = cardRect.height;
     const containerRect = messagesEl.getBoundingClientRect();
     const containerWidth = containerRect.width;
-    
+
     // Calculate columns (approximate based on container and card width)
     const cols = Math.max(1, Math.floor(containerWidth / (cardWidth + 12))); // 12px gap
-    
+
     let newIndex = currentIndex;
-    
+
     if (direction === 'down') {
       newIndex = Math.min(currentIndex + cols, cards.length - 1);
     } else if (direction === 'up') {
@@ -179,7 +179,7 @@ function navigateChats(direction) {
         newIndex = Math.max(currentIndex - 1, 0);
       }
     }
-    
+
     keyboardFocusedChatId = cards[newIndex].dataset.chatId;
   }
 
@@ -191,7 +191,7 @@ function highlightKeyboardFocus() {
   const cards = document.querySelectorAll('.msg');
   cards.forEach(card => {
     if (card.dataset.chatId === keyboardFocusedChatId) {
-      card.style.outline = '3px solid #25D366';
+      card.style.outline = '3px solid var(--color-accent)';
       card.style.outlineOffset = '2px';
       card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else {
@@ -251,7 +251,7 @@ function sendQuickReplyByIndex(index) {
 function showShortcutsGuide() {
   const modal = document.createElement('div');
   modal.className = 'modal';
-  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  modal.style.backgroundColor = 'var(--overlay-modal)';
 
   const panel = document.createElement('div');
   panel.className = 'panel';
@@ -269,21 +269,21 @@ function showShortcutsGuide() {
   header.style.justifyContent = 'space-between';
   header.style.alignItems = 'center';
   header.style.paddingBottom = '12px';
-  header.style.borderBottom = '1px solid #e9edef';
+  header.style.borderBottom = '1px solid var(--border-light)';
   header.style.marginBottom = '16px';
 
   const title = document.createElement('div');
   title.textContent = '⌨️ Keyboard Shortcuts';
   title.style.fontSize = '18px';
   title.style.fontWeight = '600';
-  title.style.color = '#111';
+  title.style.color = 'var(--text-primary)';
 
   const closeBtn = document.createElement('button');
   closeBtn.textContent = '✕';
   closeBtn.style.background = 'none';
   closeBtn.style.border = 'none';
   closeBtn.style.fontSize = '24px';
-  closeBtn.style.color = '#8696a0';
+  closeBtn.style.color = 'var(--text-secondary)';
   closeBtn.style.cursor = 'pointer';
   closeBtn.style.padding = '0';
 
@@ -345,7 +345,7 @@ function createShortcutSection(title, shortcuts) {
   sectionTitle.textContent = title;
   sectionTitle.style.fontSize = '14px';
   sectionTitle.style.fontWeight = '600';
-  sectionTitle.style.color = '#25D366';
+  sectionTitle.style.color = 'var(--color-accent)';
   sectionTitle.style.marginBottom = '8px';
   sectionTitle.style.textTransform = 'uppercase';
   section.appendChild(sectionTitle);
@@ -361,25 +361,25 @@ function createShortcutSection(title, shortcuts) {
     row.style.justifyContent = 'space-between';
     row.style.alignItems = 'center';
     row.style.padding = '8px';
-    row.style.background = '#f7f7f7';
+    row.style.background = 'var(--bg-card-hover)';
     row.style.borderRadius = '6px';
-    row.style.borderLeft = '3px solid #25D366';
+    row.style.borderLeft = '3px solid var(--color-accent)';
 
     const label = document.createElement('span');
     label.textContent = shortcut.label;
     label.style.flex = '1';
-    label.style.color = '#111';
+    label.style.color = 'var(--text-primary)';
     label.style.fontSize = '13px';
 
     const keys = document.createElement('span');
     keys.textContent = shortcut.keys;
-    keys.style.background = '#fff';
+    keys.style.background = 'var(--bg-card)';
     keys.style.padding = '4px 8px';
     keys.style.borderRadius = '4px';
-    keys.style.border = '1px solid #d1d7db';
+    keys.style.border = '1px solid var(--border-medium)';
     keys.style.fontSize = '12px';
     keys.style.fontFamily = 'monospace';
-    keys.style.color = '#3b4a54';
+    keys.style.color = 'var(--text-secondary)';
     keys.style.fontWeight = '500';
 
     row.appendChild(label);
