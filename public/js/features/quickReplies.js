@@ -58,7 +58,7 @@ function renderQuickReplies() {
     container = document.createElement('div');
     container.id = 'quick-replies-container';
     container.style.padding = '8px 12px';
-    container.style.borderBottom = '1px solid #eee';
+    container.style.borderBottom = '1px solid var(--border-light)';
     messagesEl.parentNode.insertBefore(container, messagesEl);
   }
 
@@ -66,7 +66,7 @@ function renderQuickReplies() {
 
   if (!AppState.quickReplies || AppState.quickReplies.length === 0) {
     const empty = document.createElement('div');
-    empty.style.color = '#999';
+    empty.style.color = 'var(--text-secondary)';
     empty.style.fontSize = '12px';
     empty.textContent = 'No quick replies configured';
     container.appendChild(empty);
@@ -94,7 +94,7 @@ function renderQuickReplies() {
         alert('Please select at least one chat first');
         return;
       }
-      
+
       for (const chatId of AppState.selectedChats) {
         socket.emit('sendPreset', { chatId, text: qr.text });
       }
@@ -122,51 +122,54 @@ function renderQuickReplies() {
 function openQuickReplyEditor(initialText, onSave) {
   const modal = document.createElement('div');
   modal.className = 'modal';
-  modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-  
+  modal.style.backgroundColor = 'var(--overlay-modal)';
+
   const panel = document.createElement('div');
   panel.className = 'panel';
   panel.style.width = '90%';
   panel.style.maxWidth = '500px';
   panel.style.borderRadius = '12px';
-  panel.style.boxShadow = '0 8px 32px rgba(0,0,0,0.15)';
-  
+  panel.style.backgroundColor = 'var(--bg-card)';
+  panel.style.boxShadow = 'var(--shadow-modal)';
+
   const header = document.createElement('div');
   header.className = 'header';
   header.style.display = 'flex';
   header.style.justifyContent = 'space-between';
   header.style.alignItems = 'center';
   header.style.paddingBottom = '12px';
-  header.style.borderBottom = '1px solid #e9edef';
-  
+  header.style.borderBottom = '1px solid var(--border-light)';
+
   const hTitle = document.createElement('div');
   hTitle.textContent = initialText ? 'Edit Quick Reply' : 'New Quick Reply';
   hTitle.style.fontSize = '16px';
   hTitle.style.fontWeight = '500';
-  hTitle.style.color = '#111';
-  
+  hTitle.style.color = 'var(--text-primary)';
+
   const closeBtn = document.createElement('button');
   closeBtn.textContent = '✕';
   closeBtn.style.background = 'none';
   closeBtn.style.border = 'none';
   closeBtn.style.fontSize = '20px';
-  closeBtn.style.color = '#8696a0';
+  closeBtn.style.color = 'var(--text-secondary)';
   closeBtn.style.cursor = 'pointer';
   closeBtn.style.padding = '4px 8px';
-  
+
   header.appendChild(hTitle);
   header.appendChild(closeBtn);
 
   const body = document.createElement('div');
   body.className = 'body';
   body.style.padding = '16px 0';
-  
+
   const ta = document.createElement('textarea');
   ta.placeholder = 'Enter your quick reply text...';
   ta.style.width = '100%';
   ta.style.height = '160px';
   ta.style.padding = '12px';
-  ta.style.border = '1px solid #d1d7db';
+  ta.style.background = 'var(--bg-input)';
+  ta.style.color = 'var(--text-primary)';
+  ta.style.border = '1px solid var(--border-medium)';
   ta.style.borderRadius = '8px';
   ta.style.fontSize = '14px';
   ta.style.fontFamily = 'inherit';
@@ -174,15 +177,15 @@ function openQuickReplyEditor(initialText, onSave) {
   ta.style.boxSizing = 'border-box';
   ta.style.transition = 'border-color 0.2s';
   ta.value = initialText || '';
-  
+
   ta.addEventListener('focus', () => {
-    ta.style.borderColor = '#25D366';
+    ta.style.borderColor = 'var(--color-accent)';
     ta.style.outline = 'none';
   });
   ta.addEventListener('blur', () => {
-    ta.style.borderColor = '#d1d7db';
+    ta.style.borderColor = 'var(--border-medium)';
   });
-  
+
   body.appendChild(ta);
 
   const composer = document.createElement('div');
@@ -192,33 +195,33 @@ function openQuickReplyEditor(initialText, onSave) {
   composer.style.justifyContent = 'flex-end';
   composer.style.marginTop = '16px';
   composer.style.paddingTop = '12px';
-  composer.style.borderTop = '1px solid #e9edef';
-  
+  composer.style.borderTop = '1px solid var(--border-light)';
+
   const cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancel';
   cancelBtn.style.padding = '8px 16px';
-  cancelBtn.style.border = '1px solid #d1d7db';
+  cancelBtn.style.border = '1px solid var(--border-medium)';
   cancelBtn.style.borderRadius = '8px';
-  cancelBtn.style.background = '#fff';
-  cancelBtn.style.color = '#3b4a54';
+  cancelBtn.style.background = 'var(--bg-card)';
+  cancelBtn.style.color = 'var(--text-secondary)';
   cancelBtn.style.cursor = 'pointer';
   cancelBtn.style.fontSize = '14px';
   cancelBtn.style.fontWeight = '500';
   cancelBtn.style.transition = 'all 0.2s';
-  
+
   cancelBtn.addEventListener('mouseenter', () => {
-    cancelBtn.style.backgroundColor = '#f5f6f6';
-    cancelBtn.style.borderColor = '#8696a0';
+    cancelBtn.style.backgroundColor = 'var(--bg-card-hover)';
+    cancelBtn.style.borderColor = 'var(--text-secondary)';
   });
   cancelBtn.addEventListener('mouseleave', () => {
-    cancelBtn.style.backgroundColor = '#fff';
-    cancelBtn.style.borderColor = '#d1d7db';
+    cancelBtn.style.backgroundColor = 'var(--bg-card)';
+    cancelBtn.style.borderColor = 'var(--border-medium)';
   });
-  
+
   const saveBtn = document.createElement('button');
   saveBtn.textContent = 'Save (Ctrl+Enter)';
   saveBtn.style.padding = '8px 20px';
-  saveBtn.style.background = '#25D366';
+  saveBtn.style.background = 'var(--color-accent)';
   saveBtn.style.color = '#fff';
   saveBtn.style.border = 'none';
   saveBtn.style.borderRadius = '8px';
@@ -226,16 +229,16 @@ function openQuickReplyEditor(initialText, onSave) {
   saveBtn.style.fontSize = '14px';
   saveBtn.style.fontWeight = '500';
   saveBtn.style.transition = 'all 0.2s';
-  
+
   saveBtn.addEventListener('mouseenter', () => {
-    saveBtn.style.backgroundColor = '#20bd5a';
+    saveBtn.style.backgroundColor = 'var(--color-accent-hover)';
     saveBtn.style.boxShadow = '0 2px 8px rgba(37,211,102,0.3)';
   });
   saveBtn.addEventListener('mouseleave', () => {
-    saveBtn.style.backgroundColor = '#25D366';
+    saveBtn.style.backgroundColor = 'var(--color-accent)';
     saveBtn.style.boxShadow = 'none';
   });
-  
+
   composer.appendChild(cancelBtn);
   composer.appendChild(saveBtn);
 
@@ -243,7 +246,7 @@ function openQuickReplyEditor(initialText, onSave) {
   panel.appendChild(body);
   panel.appendChild(composer);
   panel.style.padding = '16px';
-  
+
   modal.appendChild(panel);
   document.body.appendChild(modal);
 
@@ -255,7 +258,7 @@ function openQuickReplyEditor(initialText, onSave) {
   function handleSave() {
     close(ta.value.trim());
   }
-  
+
   const handleModalKeydown = (e) => {
     if (e.ctrlKey && e.key === 'Enter') {
       e.preventDefault();
@@ -270,13 +273,13 @@ function openQuickReplyEditor(initialText, onSave) {
   cancelBtn.addEventListener('click', () => close(null));
   saveBtn.addEventListener('click', handleSave);
   document.addEventListener('keydown', handleModalKeydown);
-  
+
   // Focus textarea automatically
   ta.focus();
-  
+
   // Clean up keyboard handler when modal closes
   const originalClose = close;
-  close = function(v) {
+  close = function (v) {
     document.removeEventListener('keydown', handleModalKeydown);
     originalClose(v);
   };
@@ -291,7 +294,7 @@ function renderQuickRepliesSettings() {
       panel = document.createElement('div');
       panel.id = 'sidebar-quick-replies';
       panel.style.padding = '8px';
-      panel.style.borderBottom = '1px solid #eee';
+      panel.style.borderBottom = '1px solid var(--border-light)';
       contentContainer.appendChild(panel);
     } else {
       return;
@@ -340,8 +343,8 @@ function renderQuickRepliesSettings() {
   AppState.quickReplies.forEach((qr, idx) => {
     const row = document.createElement('div');
     row.style.padding = '12px';
-    row.style.background = idx % 2 === 0 ? '#fff' : '#f9f9f9';
-    row.style.borderBottom = '1px solid #e0e0e0';
+    row.style.background = idx % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-card-hover)';
+    row.style.borderBottom = '1px solid var(--border-light)';
     row.style.display = 'flex';
     row.style.alignItems = 'center';
     row.style.gap = '8px';

@@ -14,8 +14,8 @@ function openTagContextMenu(x, y, chatId) {
   menu.style.position = 'fixed';
   menu.style.left = (x) + 'px';
   menu.style.top = (y) + 'px';
-  menu.style.background = '#fff';
-  menu.style.border = '1px solid #ccc';
+  menu.style.background = 'var(--bg-context-menu)';
+  menu.style.border = '1px solid var(--border-medium)';
   menu.style.borderRadius = '6px';
   menu.style.padding = '0';
   menu.style.zIndex = 9999;
@@ -27,8 +27,8 @@ function openTagContextMenu(x, y, chatId) {
   title.style.fontWeight = 'bold';
   title.style.padding = '10px 12px';
   title.style.fontSize = '13px';
-  title.style.color = '#666';
-  title.style.borderBottom = '1px solid #eee';
+  title.style.color = 'var(--text-secondary)';
+  title.style.borderBottom = '1px solid var(--border-light)';
   title.textContent = 'Tags';
   menu.appendChild(title);
 
@@ -49,14 +49,14 @@ function openTagContextMenu(x, y, chatId) {
       row.style.alignItems = 'center';
       row.style.userSelect = 'none';
       row.style.fontSize = '13px';
-      row.style.backgroundColor = isAssigned ? '#f0f0f0' : '#fff';
-      row.style.borderBottom = '1px solid #f0f0f0';
+      row.style.backgroundColor = isAssigned ? 'var(--bg-card-hover)' : 'transparent';
+      row.style.borderBottom = '1px solid var(--border-light)';
 
       row.addEventListener('mouseenter', () => {
-        row.style.backgroundColor = '#e8e8e8';
+        row.style.backgroundColor = 'var(--bg-card-hover)';
       });
       row.addEventListener('mouseleave', () => {
-        row.style.backgroundColor = isAssigned ? '#f0f0f0' : '#fff';
+        row.style.backgroundColor = isAssigned ? 'var(--bg-card-hover)' : 'transparent';
       });
 
       const checkmark = document.createElement('span');
@@ -65,13 +65,13 @@ function openTagContextMenu(x, y, chatId) {
       checkmark.style.display = 'inline-block';
       checkmark.textContent = isAssigned ? '✓' : '';
       checkmark.style.fontWeight = 'bold';
-      checkmark.style.color = t.color || '#999';
+      checkmark.style.color = t.color || 'var(--text-secondary)';
 
       const colorDot = document.createElement('span');
       colorDot.style.width = '10px';
       colorDot.style.height = '10px';
       colorDot.style.borderRadius = '5px';
-      colorDot.style.background = t.color || '#999';
+      colorDot.style.background = t.color || 'var(--text-secondary)';
       colorDot.style.display = 'inline-block';
       colorDot.style.marginRight = '8px';
       colorDot.style.flexShrink = 0;
@@ -108,7 +108,7 @@ function openTagContextMenu(x, y, chatId) {
     const empty = document.createElement('div');
     empty.style.padding = '10px 12px';
     empty.style.fontSize = '13px';
-    empty.style.color = '#999';
+    empty.style.color = 'var(--text-secondary)';
     empty.textContent = 'No tags yet';
     menu.appendChild(empty);
   }
@@ -116,7 +116,7 @@ function openTagContextMenu(x, y, chatId) {
   // separator
   const sep = document.createElement('div');
   sep.style.height = '1px';
-  sep.style.background = '#ddd';
+  sep.style.background = 'var(--border-light)';
   menu.appendChild(sep);
 
   // create new tag action
@@ -127,10 +127,10 @@ function openTagContextMenu(x, y, chatId) {
   createRow.style.userSelect = 'none';
   createRow.textContent = '+ Create New Tag';
   createRow.addEventListener('mouseenter', () => {
-    createRow.style.backgroundColor = '#e8e8e8';
+    createRow.style.backgroundColor = 'var(--bg-card-hover)';
   });
   createRow.addEventListener('mouseleave', () => {
-    createRow.style.backgroundColor = '#fff';
+    createRow.style.backgroundColor = 'transparent';
   });
   createRow.addEventListener('click', () => {
     if (AppState.currentContextMenu) {
@@ -150,8 +150,8 @@ function openTagContextMenu(x, y, chatId) {
   const notesTitle = document.createElement('div');
   notesTitle.style.padding = '8px 12px';
   notesTitle.style.fontSize = '13px';
-  notesTitle.style.color = '#666';
-  notesTitle.style.borderTop = '1px solid #eee';
+  notesTitle.style.color = 'var(--text-secondary)';
+  notesTitle.style.borderTop = '1px solid var(--border-light)';
   notesTitle.textContent = 'Notes';
   menu.appendChild(notesTitle);
 
@@ -162,10 +162,10 @@ function openTagContextMenu(x, y, chatId) {
   addNoteRow.style.userSelect = 'none';
   addNoteRow.textContent = '+ Add Note';
   addNoteRow.addEventListener('mouseenter', () => {
-    addNoteRow.style.backgroundColor = '#e8e8e8';
+    addNoteRow.style.backgroundColor = 'var(--bg-card-hover)';
   });
   addNoteRow.addEventListener('mouseleave', () => {
-    addNoteRow.style.backgroundColor = '#fff';
+    addNoteRow.style.backgroundColor = 'transparent';
   });
   addNoteRow.addEventListener('click', () => {
     if (AppState.currentContextMenu) {
@@ -185,10 +185,10 @@ function openTagContextMenu(x, y, chatId) {
   viewNotesRow.style.userSelect = 'none';
   viewNotesRow.textContent = 'Edit Notes';
   viewNotesRow.addEventListener('mouseenter', () => {
-    viewNotesRow.style.backgroundColor = '#e8e8e8';
+    viewNotesRow.style.backgroundColor = 'var(--bg-card-hover)';
   });
   viewNotesRow.addEventListener('mouseleave', () => {
-    viewNotesRow.style.backgroundColor = '#fff';
+    viewNotesRow.style.backgroundColor = 'transparent';
   });
   viewNotesRow.addEventListener('click', () => {
     if (AppState.currentContextMenu) {
@@ -205,8 +205,8 @@ function openTagContextMenu(x, y, chatId) {
   const actionsTitle = document.createElement('div');
   actionsTitle.style.padding = '8px 12px';
   actionsTitle.style.fontSize = '13px';
-  actionsTitle.style.color = '#666';
-  actionsTitle.style.borderTop = '1px solid #eee';
+  actionsTitle.style.color = 'var(--text-secondary)';
+  actionsTitle.style.borderTop = '1px solid var(--border-light)';
   actionsTitle.textContent = 'Actions';
   menu.appendChild(actionsTitle);
 
@@ -219,10 +219,10 @@ function openTagContextMenu(x, y, chatId) {
   openChatRow.textContent = '💬 Open Full Chat';
 
   openChatRow.addEventListener('mouseenter', () => {
-    openChatRow.style.backgroundColor = '#e8e8e8';
+    openChatRow.style.backgroundColor = 'var(--bg-card-hover)';
   });
   openChatRow.addEventListener('mouseleave', () => {
-    openChatRow.style.backgroundColor = '#fff';
+    openChatRow.style.backgroundColor = 'transparent';
   });
   openChatRow.addEventListener('click', () => {
     if (AppState.currentContextMenu) {
@@ -243,10 +243,10 @@ function openTagContextMenu(x, y, chatId) {
   archiveRow.textContent = isArchived ? '📂 Unarchive Chat' : '📦 Archive Chat';
 
   archiveRow.addEventListener('mouseenter', () => {
-    archiveRow.style.backgroundColor = '#e8e8e8';
+    archiveRow.style.backgroundColor = 'var(--bg-card-hover)';
   });
   archiveRow.addEventListener('mouseleave', () => {
-    archiveRow.style.backgroundColor = '#fff';
+    archiveRow.style.backgroundColor = 'transparent';
   });
   archiveRow.addEventListener('click', () => {
     if (AppState.currentContextMenu) {
@@ -270,10 +270,10 @@ function openTagContextMenu(x, y, chatId) {
   markReadRow.textContent = '✓ Mark as Read';
 
   markReadRow.addEventListener('mouseenter', () => {
-    markReadRow.style.backgroundColor = '#e8e8e8';
+    markReadRow.style.backgroundColor = 'var(--bg-card-hover)';
   });
   markReadRow.addEventListener('mouseleave', () => {
-    markReadRow.style.backgroundColor = '#fff';
+    markReadRow.style.backgroundColor = 'transparent';
   });
   markReadRow.addEventListener('click', () => {
     if (AppState.currentContextMenu) {
